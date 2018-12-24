@@ -148,7 +148,7 @@
 		459F79632160F2D600EBFB43 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		459F79852160F56F00EBFB43 /* MessagePackable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagePackable.swift; sourceTree = "<group>"; };
 		459F798721698E3800EBFB43 /* MessagePackEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagePackEncoder.swift; sourceTree = "<group>"; };
-		459F798D216A5B4B00EBFB43 /* MessagePackerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MessagePackerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		459F798D216A5B4B00EBFB43 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		459F7991216A5B4B00EBFB43 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		459F7998216B1A8000EBFB43 /* MessagePackDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagePackDecoder.swift; sourceTree = "<group>"; };
 		45B2E7D22197F242004DD86C /* IntegerPackedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegerPackedTests.swift; sourceTree = "<group>"; };
@@ -237,7 +237,7 @@
 			isa = PBXGroup;
 			children = (
 				459F795F2160F2D600EBFB43 /* MessagePacker.framework */,
-				459F798D216A5B4B00EBFB43 /* MessagePackerTests.xctest */,
+				459F798D216A5B4B00EBFB43 /* Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -326,9 +326,9 @@
 			productReference = 459F795F2160F2D600EBFB43 /* MessagePacker.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		459F798C216A5B4B00EBFB43 /* MessagePackerTests */ = {
+		459F798C216A5B4B00EBFB43 /* Tests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 459F7995216A5B4B00EBFB43 /* Build configuration list for PBXNativeTarget "MessagePackerTests" */;
+			buildConfigurationList = 459F7995216A5B4B00EBFB43 /* Build configuration list for PBXNativeTarget "Tests" */;
 			buildPhases = (
 				459F7989216A5B4B00EBFB43 /* Sources */,
 				459F798A216A5B4B00EBFB43 /* Frameworks */,
@@ -339,9 +339,9 @@
 			dependencies = (
 				459F7994216A5B4B00EBFB43 /* PBXTargetDependency */,
 			);
-			name = MessagePackerTests;
+			name = Tests;
 			productName = MessagePackCodableTests;
-			productReference = 459F798D216A5B4B00EBFB43 /* MessagePackerTests.xctest */;
+			productReference = 459F798D216A5B4B00EBFB43 /* Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -378,7 +378,7 @@
 			projectRoot = "";
 			targets = (
 				459F795E2160F2D600EBFB43 /* MessagePacker */,
-				459F798C216A5B4B00EBFB43 /* MessagePackerTests */,
+				459F798C216A5B4B00EBFB43 /* Tests */,
 			);
 		};
 /* End PBXProject section */
@@ -723,7 +723,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		459F7995216A5B4B00EBFB43 /* Build configuration list for PBXNativeTarget "MessagePackerTests" */ = {
+		459F7995216A5B4B00EBFB43 /* Build configuration list for PBXNativeTarget "Tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				459F7996216A5B4B00EBFB43 /* Debug */,

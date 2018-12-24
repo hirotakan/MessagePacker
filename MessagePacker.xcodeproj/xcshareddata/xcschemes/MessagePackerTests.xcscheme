@@ -17,8 +17,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "459F798C216A5B4B00EBFB43"
-               BuildableName = "MessagePackerTests.xctest"
-               BlueprintName = "MessagePackerTests"
+               BuildableName = "Tests.xctest"
+               BlueprintName = "Tests"
                ReferencedContainer = "container:MessagePacker.xcodeproj">
             </BuildableReference>
          </TestableReference>
