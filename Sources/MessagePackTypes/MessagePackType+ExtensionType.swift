@@ -125,7 +125,7 @@ extension MessagePackType.ExtensionType {
 
 extension MessagePackType.ExtensionType {
     func range(_ value: Data) throws -> Range<Int> {
-        return 0..<(try dataRange(value).endIndex)
+        return 0..<(try dataRange(value).upperBound)
     }
 
     private func length(_ value: Data) throws -> Int {

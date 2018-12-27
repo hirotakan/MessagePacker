@@ -82,11 +82,12 @@ extension MessagePackType.BinaryType {
     }
 
     func dataRange(_ value: Data) throws -> Range<Int> {
-        return lengthRange.endIndex..<(lengthRange.endIndex + (try length(value)))
+        let endIndex = lengthRange.upperBound
+        return endIndex..<(endIndex + (try length(value)))
     }
 
     func range(_ value: Data) throws -> Range<Int> {
-        return 0..<(try dataRange(value).endIndex)
+        return 0..<(try dataRange(value).upperBound)
     }
 }
 

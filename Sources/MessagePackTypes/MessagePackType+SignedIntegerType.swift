@@ -68,7 +68,7 @@ extension MessagePackType.SignedIntegerType {
     }
 
     var range: Range<Int> {
-        return 0..<dataRange.endIndex
+        return 0..<dataRange.upperBound
     }
 
     private var dataRange: Range<Int> {
