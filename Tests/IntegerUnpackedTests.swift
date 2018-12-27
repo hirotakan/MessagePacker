@@ -76,15 +76,13 @@ class IntegerUnpackedTests: XCTestCase {
 
     func testInt64() {
         let input = Data([211, 255, 255, 255, 255, 0, 0, 0, 0])
-        let output = -4294967296
-        XCTAssertEqual(try decoder.decode(Int.self, from: input), output)
-        XCTAssertEqual(try decoder.decode(Int64.self, from: input), Int64(output))
+        let output: Int64 = -4294967296
+        XCTAssertEqual(try decoder.decode(Int64.self, from: input), output)
     }
 
     func testUInt64() {
         let input = Data([207, 255, 255, 255, 255, 255, 255, 255, 255])
-        let output: UInt = 18446744073709551615
-        XCTAssertEqual(try decoder.decode(UInt.self, from: input), output)
-        XCTAssertEqual(try decoder.decode(UInt64.self, from: input), UInt64(output))
+        let output: UInt64 = 18446744073709551615
+        XCTAssertEqual(try decoder.decode(UInt64.self, from: input), output)
     }
 }

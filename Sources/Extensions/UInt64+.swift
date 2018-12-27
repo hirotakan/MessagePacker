@@ -10,10 +10,10 @@ import Foundation
 
 extension UInt64: MessagePackable {
     func pack() -> Data {
-        return UInt(self).pack()
+        return MessagePackType.UnsignedIntegerType.pack(for: self)
     }
 
     static func unpack(for value: Data) throws -> UInt64 {
-        return try UInt64(UInt.unpack(for: value))
+        return try MessagePackType.UnsignedIntegerType.unpack(for: value)
     }
 }

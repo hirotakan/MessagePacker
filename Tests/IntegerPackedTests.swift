@@ -68,23 +68,21 @@ class IntegerPackedTests: XCTestCase {
     }
 
     func testUInt32() {
-        let input = 4294967295
+        let input: UInt32 = 4294967295
         let output = Data([206, 255, 255, 255, 255])
         XCTAssertEqual(try encoder.encode(UInt(input)), output)
         XCTAssertEqual(try encoder.encode(UInt32(input)), output)
     }
 
     func testInt64() {
-        let input = -4294967296
+        let input: Int64 = -4294967296
         let output = Data([211, 255, 255, 255, 255, 0, 0, 0, 0])
-        XCTAssertEqual(try encoder.encode(Int(input)), output)
-        XCTAssertEqual(try encoder.encode(Int64(input)), output)
+        XCTAssertEqual(try encoder.encode(input), output)
     }
 
     func testUInt64() {
-        let input: UInt = 18446744073709551615
+        let input: UInt64 = 18446744073709551615
         let output = Data([207, 255, 255, 255, 255, 255, 255, 255, 255])
         XCTAssertEqual(try encoder.encode(input), output)
-        XCTAssertEqual(try encoder.encode(UInt64(input)), output)
     }
 }

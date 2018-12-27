@@ -19,13 +19,13 @@ extension MessagePackType {
 }
 
 extension MessagePackType.SignedIntegerType {
-    init(_ value: Int) {
+    init<T: BinaryInteger>(_ value: T) {
         switch value {
-        case Int(Int8.min)...Int(Int8.max):
+        case T(Int8.min)...T(Int8.max):
             self = MessagePackType.FixIntType(Int8(value)).map { .fixint($0) } ?? .int8
-        case Int(Int16.min)...Int(Int16.max):
+        case T(Int16.min)...T(Int16.max):
             self = .int16
-        case Int(Int32.min)...Int(Int32.max):
+        case T(Int32.min)...T(Int32.max):
             self = .int32
         default:
             self = .int64
@@ -88,7 +88,7 @@ extension MessagePackType.SignedIntegerType {
 }
 
 extension MessagePackType.SignedIntegerType {
-    static func pack(for value: Int) -> Data {
+    static func pack<T: BinaryInteger>(for value: T) -> Data {
         let type = MessagePackType.SignedIntegerType(value)
         let firstByte = type.firstByte.map { Data([$0]) } ?? packInteger(for: Int8(value).bigEndian)
         switch type {
@@ -105,21 +105,21 @@ extension MessagePackType.SignedIntegerType {
         }
     }
 
-    static func unpack(for value: Data) throws -> Int {
+    static func unpack<T: BinaryInteger>(for value: Data) throws -> T {
         guard let firstByte = value.first else { throw MessagePackError.emptyData }
 
         let type = try MessagePackType.SignedIntegerType(firstByte)
         switch type {
         case .fixint:
-            return Int(Int8(bitPattern: firstByte))
+            return T(Int8(bitPattern: firstByte))
         case .int8:
-            return Int(Int8(bigEndian: unpackInteger(try value.subdata(type.dataRange))))
+            return T(Int8(bigEndian: unpackInteger(try value.subdata(type.dataRange))))
         case .int16:
-            return Int(Int16(bigEndian: unpackInteger(try value.subdata(type.dataRange))))
+            return T(Int16(bigEndian: unpackInteger(try value.subdata(type.dataRange))))
         case .int32:
-            return Int(Int32(bigEndian: unpackInteger(try value.subdata(type.dataRange))))
+            return T(Int32(bigEndian: unpackInteger(try value.subdata(type.dataRange))))
         case .int64:
-            return Int(Int64(bigEndian: unpackInteger(try value.subdata(type.dataRange))))
+            return T(Int64(bigEndian: unpackInteger(try value.subdata(type.dataRange))))
         }
     }
 }

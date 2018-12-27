@@ -9,32 +9,32 @@
 import Foundation
 
 public struct MessagePackTimestamp: Equatable {
-    public var seconds: Int
-    public var nanoseconds: Int
+    public var seconds: Int64
+    public var nanoseconds: Int64
 }
 
 extension MessagePackTimestamp {
     public init(date: Date) {
         let timeInterval = date.timeIntervalSince1970
-        self.seconds = Int(timeInterval)
-        self.nanoseconds = Int(timeInterval.truncatingRemainder(dividingBy: 1) * 1_000_000_000)
+        self.seconds = Int64(timeInterval)
+        self.nanoseconds = Int64(timeInterval.truncatingRemainder(dividingBy: 1) * 1_000_000_000)
     }
 
     public init(extension ext: MessagePackExtension) throws {
         switch ext.data.count {
         case 4:
             let time = UInt32(bigEndian: unpackInteger(ext.data))
-            self.seconds = Int(time)
+            self.seconds = Int64(time)
             self.nanoseconds = 0
         case 8:
             let time = UInt64(bigEndian: unpackInteger(ext.data))
-            self.seconds = Int(time & 0x00000003ffffffff)
-            self.nanoseconds = Int(time >> 34)
+            self.seconds = Int64(time & 0x00000003ffffffff)
+            self.nanoseconds = Int64(time >> 34)
         case 12:
             let nanosec = UInt32(bigEndian: unpackInteger(try ext.data.subdata(0..<4)))
             let sec = Int64(bigEndian: unpackInteger(try ext.data.subdata(4..<12)))
-            self.seconds = Int(sec)
-            self.nanoseconds = Int(nanosec)
+            self.seconds = Int64(sec)
+            self.nanoseconds = Int64(nanosec)
         default:
             throw MessagePackError.invalidData
         }
