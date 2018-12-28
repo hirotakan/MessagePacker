@@ -1,5 +1,6 @@
 # MessagePacker
 
+[![Build Status](https://travis-ci.org/hirotakan/MessagePacker.svg?branch=master)](https://travis-ci.org/hirotakan/MessagePacker)
 ![Swift 4.0](https://img.shields.io/badge/Swift-4.0-orange.svg)
 [![License](https://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
@@ -12,6 +13,8 @@
 ## Usage
 
 ```swift
+import MessagePacker
+
 struct Coordinate: Codable {
     var latitude: Double
     var longitude: Double
