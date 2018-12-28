@@ -90,7 +90,7 @@ extension MessagePackType.MapType {
     }
 
     private func endIndex(for value: Data) throws -> Int {
-        let startIndex = lengthRange.endIndex
+        let startIndex = lengthRange.upperBound
         let length = try self.length(value)
 
         return try (0..<length).reduce(into: startIndex) { index, _ in
@@ -106,7 +106,7 @@ extension MessagePackType.MapType {
         guard let firstByte = value.first else { throw MessagePackError.emptyData }
 
         let type = try MessagePackType.MapType(firstByte)
-        let startIndex = type.lengthRange.endIndex
+        let startIndex = type.lengthRange.upperBound
         let length = try type.length(value)
 
         return try (0..<length)

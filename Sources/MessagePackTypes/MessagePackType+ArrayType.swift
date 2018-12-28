@@ -90,7 +90,7 @@ extension MessagePackType.ArrayType {
     }
 
     private func endIndex(for value: Data) throws -> Int {
-        let startIndex = lengthRange.endIndex
+        let startIndex = lengthRange.upperBound
         let length = try self.length(for: value)
 
         return try (0..<length).reduce(into: startIndex) { index, _ in
@@ -105,7 +105,7 @@ extension MessagePackType.ArrayType {
         guard let firstByte = value.first else { throw MessagePackError.emptyData }
 
         let type = try MessagePackType.ArrayType(firstByte)
-        let startIndex = type.lengthRange.endIndex
+        let startIndex = type.lengthRange.upperBound
         let length = try type.length(for: value)
 
         return try (0..<length)
