@@ -38,7 +38,7 @@ private extension MessagePackEncoder {
     }
 
     func boxInteger<T: BinaryInteger>(_ value: T) -> Data {
-        return value > 0 ? UInt(value).pack() : Int(value).pack()
+        return value > 0 ? UInt64(value).pack() : Int64(value).pack()
     }
 
     func boxMessagePack<T: MessagePackable>(_ value: T) -> Data {

@@ -12,4 +12,4 @@ matrix:
         - xcodebuild -version
         - xcodebuild -showsdks
         - xcodebuild test -scheme "$SCHEME" -destination "name=iPhone X" -configuration Debug | xcpretty
-        - xcodebuild test -scheme "$SCHEME" -destination "OS=8.4,name=iPhone 5s" -configuration Debug | xcpretty
+        - xcodebuild test -scheme "$SCHEME" -destination "OS=8.4,name=iPhone 5" -configuration Debug | xcpretty

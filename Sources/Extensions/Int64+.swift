@@ -10,10 +10,10 @@ import Foundation
 
 extension Int64: MessagePackable {
     func pack() -> Data {
-        return Int(self).pack()
+        return MessagePackType.SignedIntegerType.pack(for: self)
     }
 
     static func unpack(for value: Data) throws -> Int64 {
-        return try Int64(Int.unpack(for: value))
+        return try MessagePackType.SignedIntegerType.unpack(for: value)
     }
 }

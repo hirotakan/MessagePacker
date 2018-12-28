@@ -19,15 +19,15 @@ extension MessagePackType {
 }
 
 extension MessagePackType.UnsignedIntegerType {
-    init(_ value: UInt) {
+    init<T: BinaryInteger>(_ value: T) {
         switch value {
-        case MessagePackType.FixIntType.positiveFirstByteRange.map(UInt.init):
+        case MessagePackType.FixIntType.positiveFirstByteRange.map { T($0) }:
             self = .fixint
-        case UInt(UInt8.min)...UInt(UInt8.max):
+        case T(UInt8.min)...T(UInt8.max):
             self = .uint8
-        case UInt(UInt16.min)...UInt(UInt16.max):
+        case T(UInt16.min)...T(UInt16.max):
             self = .uint16
-        case UInt(UInt32.min)...UInt(UInt32.max):
+        case T(UInt32.min)...T(UInt32.max):
             self = .uint32
         default:
             self = .uint64
@@ -89,7 +89,7 @@ extension MessagePackType.UnsignedIntegerType {
 }
 
 extension MessagePackType.UnsignedIntegerType {
-    static func pack(for value: UInt) -> Data {
+    static func pack<T: BinaryInteger>(for value: T) -> Data {
         let type = MessagePackType.UnsignedIntegerType(value)
         let firstByte = type.firstByte.map { Data([$0]) } ?? packInteger(for: UInt8(value).bigEndian)
         switch type {
@@ -106,21 +106,21 @@ extension MessagePackType.UnsignedIntegerType {
         }
     }
 
-    static func unpack(for value: Data) throws -> UInt {
+    static func unpack<T: BinaryInteger>(for value: Data) throws -> T {
         guard let firstByte = value.first else { throw MessagePackError.emptyData }
 
         let type = try MessagePackType.UnsignedIntegerType(firstByte)
         switch type {
         case .fixint:
-            return UInt(firstByte)
+            return T(firstByte)
         case .uint8:
-            return UInt(UInt8(bigEndian: unpackInteger(try value.subdata(type.dataRange))))
+            return T(UInt8(bigEndian: unpackInteger(try value.subdata(type.dataRange))))
         case .uint16:
-            return UInt(UInt16(bigEndian: unpackInteger(try value.subdata(type.dataRange))))
+            return T(UInt16(bigEndian: unpackInteger(try value.subdata(type.dataRange))))
         case .uint32:
-            return UInt(UInt32(bigEndian: unpackInteger(try value.subdata(type.dataRange))))
+            return T(UInt32(bigEndian: unpackInteger(try value.subdata(type.dataRange))))
         case .uint64:
-            return UInt(UInt64(bigEndian: unpackInteger(try value.subdata(type.dataRange))))
+            return T(UInt64(bigEndian: unpackInteger(try value.subdata(type.dataRange))))
         }
     }
 }
