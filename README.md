@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Cocoapods](https://img.shields.io/cocoapods/v/MessagePacker.svg)](http://cocoadocs.org/docsets/MessagePacker)
-![Platforms](https://img.shields.io/badge/platforms-iOS%20%7C%20macOS%20%7C%20tvOS-lightgrey.svg)
+![Platforms](https://img.shields.io/badge/platforms-iOS%20%7C%20macOS%20%7C%20tvOS%20%7C%20watchOS-lightgrey.svg)
 
 **MessagePacker** is a [MessagePack](http://msgpack.org/) encoder & decoder for Swift and supports [Codable](https://developer.apple.com/documentation/swift/codable).
 
@@ -76,6 +76,7 @@ pod 'MessagePacker'
  - iOS 8.0 or later
  - macOS 10.10 or later
  - tvOS 9.0 or later
+ - watchOS 2.0 or later
 
 
 ## License
