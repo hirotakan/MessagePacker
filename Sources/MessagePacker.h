@@ -6,7 +6,7 @@
 //  Copyright © 2018年 hiro. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
 //! Project version number for MessagePacker.
 FOUNDATION_EXPORT double MessagePackerVersionNumber;

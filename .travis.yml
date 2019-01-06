@@ -13,6 +13,7 @@ matrix:
         - xcodebuild -showsdks
         - xcodebuild test -scheme "$SCHEME" -destination "name=iPhone X" -configuration Debug | xcpretty
         - xcodebuild build -scheme "$SCHEME" -destination "OS=8.4,name=iPhone 5" -configuration Debug | xcpretty
+        - xcodebuild test -scheme "$SCHEME" -destination "arch=x86_64" -configuration Debug | xcpretty
     - language: objective-c
       os: osx
       osx_image: xcode10.1
@@ -22,3 +23,4 @@ matrix:
         - xcodebuild -showsdks
         - xcodebuild test -scheme "$SCHEME" -destination "name=iPhone X" -configuration Debug | xcpretty
         - xcodebuild test -scheme "$SCHEME" -destination "OS=8.4,name=iPhone 5" -configuration Debug | xcpretty
+        - xcodebuild test -scheme "$SCHEME" -destination "arch=x86_64" -configuration Debug | xcpretty
