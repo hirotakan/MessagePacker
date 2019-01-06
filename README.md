@@ -27,22 +27,31 @@ struct Landmark: Codable {
     var location: Coordinate
 }
 
-let input = Landmark(name: "Mojave Desert", foundingYear: 0, location: Coordinate(latitude: 35.0110079, longitude: -115.4821313))
+let input = Landmark(
+    name: "Mojave Desert",
+    foundingYear: 0,
+    location: Coordinate(
+        latitude: 35.0110079,
+        longitude: -115.4821313
+    )
+)
 
 let data = try! MessagePackEncoder().encode(input)
-
-// data: [131, 164, 110, 97, 109, 101, 173, 77, 111, 106,
-//    97, 118, 101, 32, 68, 101, 115, 101, 114, 116,
-//    172, 102, 111, 117, 110, 100, 105, 110, 103, 89,
-//    101, 97, 114, 0, 168, 108, 111, 99, 97, 116,
-//    105, 111, 110, 130, 168, 108, 97, 116, 105, 116,
-//    117, 100, 101, 203, 64, 65, 129, 104, 180, 245,
-//    63, 179, 169, 108, 111, 110, 103, 105, 116, 117,
-//    100, 101, 203, 192, 92, 222, 219, 61, 61, 120, 49]
-
 let landmark = try! MessagePackDecoder().decode(Landmark.self, from: data)
 
-// landmark: Landmark(
+print([UInt8](data))
+print(landmark)
+
+// [131, 164, 110, 97, 109, 101, 173, 77, 111, 106,
+//  97, 118, 101, 32, 68, 101, 115, 101, 114, 116,
+//  172, 102, 111, 117, 110, 100, 105, 110, 103, 89,
+//  101, 97, 114, 0, 168, 108, 111, 99, 97, 116,
+//  105, 111, 110, 130, 168, 108, 97, 116, 105, 116,
+//  117, 100, 101, 203, 64, 65, 129, 104, 180, 245,
+//  63, 179, 169, 108, 111, 110, 103, 105, 116, 117,
+//  100, 101, 203, 192, 92, 222, 219, 61, 61, 120, 49]
+
+// Landmark(
 //     name: "Mojave Desert",
 //     foundingYear: 0,
 //     location: MessagePackerTests.Coordinate(
