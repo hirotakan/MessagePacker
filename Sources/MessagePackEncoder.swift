@@ -20,7 +20,10 @@ open class MessagePackEncoder: Encoder {
     }
 
     public func unkeyedContainer() -> UnkeyedEncodingContainer {
-        return UnkeyedContainer(referencing: self, codingPath: codingPath)
+        return UnkeyedContainer(referencing: self, codingPath: codingPath) { [weak self] in
+            guard let `self` = self else { return }
+            self.storage.push(container: $0)
+        }
     }
 
     public func singleValueContainer() -> SingleValueEncodingContainer {
@@ -157,7 +160,10 @@ extension MessagePackEncoder {
         func nestedUnkeyedContainer(forKey key: Key) -> UnkeyedEncodingContainer {
             codingPath.append(key)
             defer { codingPath.removeLast() }
-            return NestedUnkeyedContainer(referencing: encoder, codingPath: codingPath, container: self, key: key)
+            return UnkeyedContainer(referencing: encoder, codingPath: codingPath) { [weak self] in
+                guard let `self` = self else { return }
+                self.add($0, forKey: key)
+            }
         }
 
         func superEncoder() -> Encoder {
@@ -174,15 +180,17 @@ extension MessagePackEncoder {
         }
     }
 
-    class UnkeyedContainer: UnkeyedEncodingContainer {
+    final class UnkeyedContainer: UnkeyedEncodingContainer {
         private let encoder: MessagePackEncoder
         private(set) var codingPath: [CodingKey]
-        fileprivate(set) var count = 0
-        fileprivate var packedData = Data()
+        private(set) var count = 0
+        private var packedData = Data()
+        private let completion: (Data) -> ()
 
-        init(referencing encoder: MessagePackEncoder, codingPath: [CodingKey]) {
+        init(referencing encoder: MessagePackEncoder, codingPath: [CodingKey], completion: @escaping (Data) -> ()) {
             self.encoder = encoder
             self.codingPath = codingPath
+            self.completion = completion
         }
 
         fileprivate func insert(_ value: Data, at index: Int) {
@@ -274,7 +282,10 @@ extension MessagePackEncoder {
         func nestedUnkeyedContainer() -> UnkeyedEncodingContainer {
             codingPath.append(MessagePackKey(index: count))
             defer { codingPath.removeLast() }
-            return NestedUnkeyedContainer<MessagePackKey>(referencing: encoder, codingPath: codingPath, container: self, index: packedData.endIndex)
+            return UnkeyedContainer(referencing: encoder, codingPath: codingPath) { [weak self] in
+                guard let `self` = self else { return }
+                self.insert($0, at: self.packedData.endIndex)
+            }
         }
 
         func superEncoder() -> Encoder {
@@ -282,8 +293,8 @@ extension MessagePackEncoder {
         }
 
         deinit {
-            let container = MessagePackType.ArrayType.pack(count: count, value: packedData)
-            encoder.storage.push(container: container)
+            let value = MessagePackType.ArrayType.pack(count: count, value: packedData)
+            completion(value)
         }
     }
 
@@ -389,35 +400,6 @@ extension MessagePackEncoder {
 
         deinit {
             let value = MessagePackType.MapType.pack(count: count, value: packedData)
-            switch reference {
-            case let .array(container, index):
-                container.insert(value, at: index)
-            case let .dictionary(container, key):
-                container.add(value, forKey: key)
-            }
-        }
-    }
-
-    class NestedUnkeyedContainer<Key: CodingKey>: UnkeyedContainer {
-        private enum Reference {
-            case array(UnkeyedContainer, Int)
-            case dictionary(KeyedContainer<Key>, CodingKey)
-        }
-
-        private let reference: Reference
-
-        init(referencing encoder: MessagePackEncoder, codingPath: [CodingKey], container: KeyedContainer<Key>, key: CodingKey) {
-            reference = .dictionary(container, key)
-            super.init(referencing: encoder, codingPath: codingPath)
-        }
-
-        init(referencing encoder: MessagePackEncoder, codingPath: [CodingKey], container: UnkeyedContainer, index: Int) {
-            reference = .array(container, index)
-            super.init(referencing: encoder, codingPath: codingPath)
-        }
-
-        deinit {
-            let value = MessagePackType.ArrayType.pack(count: count, value: packedData)
             switch reference {
             case let .array(container, index):
                 container.insert(value, at: index)
