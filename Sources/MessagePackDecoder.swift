@@ -36,7 +36,7 @@ open class MessagePackDecoder: Decoder {
         do {
             let container = try lastContainer(UnkeyedDecodingContainer.self)
             let value = try MessagePackType.ArrayType.split(for: container)
-            return UnkeyedContanier(referencing: self, container: value)
+            return UnkeyedContainer(referencing: self, container: value)
         } catch let error as MessagePackError {
             throw error.asDecodingError([Any].self, codingPath: codingPath)
         } catch {
@@ -47,7 +47,7 @@ open class MessagePackDecoder: Decoder {
     public func singleValueContainer() throws -> SingleValueDecodingContainer {
         do {
             let container = try lastContainer(SingleValueDecodingContainer.self)
-            return SingleValueContanier(referencing: self, container: container)
+            return SingleValueContainer(referencing: self, container: container)
         } catch let error as MessagePackError {
             throw error.asDecodingError([Any].self, codingPath: codingPath)
         } catch {
@@ -231,7 +231,7 @@ extension MessagePackDecoder {
             do {
                 let entry = try findEntry(by: key)
                 let container = try MessagePackType.ArrayType.split(for: entry)
-                return UnkeyedContanier(referencing: decoder, container: container)
+                return UnkeyedContainer(referencing: decoder, container: container)
             } catch let error as MessagePackError {
                 throw error.asDecodingError([Any].self, codingPath: codingPath)
             } catch {
@@ -257,7 +257,7 @@ extension MessagePackDecoder {
 
     }
 
-    struct UnkeyedContanier: UnkeyedDecodingContainer {
+    struct UnkeyedContainer: UnkeyedDecodingContainer {
         private let decoder: MessagePackDecoder
         private(set) var codingPath: [CodingKey]
         private(set) var count: Int?
@@ -378,7 +378,7 @@ extension MessagePackDecoder {
             defer { decoder.codingPath.removeLast() }
 
             do {
-                try validateIndex(UnkeyedContanier.self)
+                try validateIndex(UnkeyedContainer.self)
 
                 let value = self.container[currentIndex]
                 let container = try MessagePackType.MapType.split(for: value)
@@ -398,14 +398,14 @@ extension MessagePackDecoder {
             defer { decoder.codingPath.removeLast() }
 
             do {
-                try validateIndex(UnkeyedContanier.self)
+                try validateIndex(UnkeyedContainer.self)
 
                 let value = self.container[currentIndex]
                 let container = try MessagePackType.ArrayType.split(for: value)
 
                 currentIndex += 1
 
-                return UnkeyedContanier(referencing: decoder, container: container)
+                return UnkeyedContainer(referencing: decoder, container: container)
             } catch let error as MessagePackError {
                 throw error.asDecodingError([Any].self, codingPath: codingPath)
             } catch {
@@ -417,7 +417,7 @@ extension MessagePackDecoder {
             decoder.codingPath.append(MessagePackKey(index: currentIndex))
             defer { decoder.codingPath.removeLast() }
 
-            try validateIndex(UnkeyedContanier.self)
+            try validateIndex(UnkeyedContainer.self)
 
             let value = self.container[currentIndex]
             currentIndex += 1
@@ -426,7 +426,7 @@ extension MessagePackDecoder {
         }
     }
 
-    struct SingleValueContanier: SingleValueDecodingContainer {
+    struct SingleValueContainer: SingleValueDecodingContainer {
         private var decoder: MessagePackDecoder
         private(set) var codingPath: [CodingKey]
         private let container: Data

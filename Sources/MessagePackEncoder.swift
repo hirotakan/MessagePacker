@@ -20,11 +20,11 @@ open class MessagePackEncoder: Encoder {
     }
 
     public func unkeyedContainer() -> UnkeyedEncodingContainer {
-        return UnkeyedContanier(referencing: self, codingPath: codingPath)
+        return UnkeyedContainer(referencing: self, codingPath: codingPath)
     }
 
     public func singleValueContainer() -> SingleValueEncodingContainer {
-        return SingleValueContanier(referencing: self, codingPath: codingPath)
+        return SingleValueContainer(referencing: self, codingPath: codingPath)
     }
 
     open func encode<T: Encodable>(_ value: T) throws -> Data {
@@ -174,7 +174,7 @@ extension MessagePackEncoder {
         }
     }
 
-    class UnkeyedContanier: UnkeyedEncodingContainer {
+    class UnkeyedContainer: UnkeyedEncodingContainer {
         private let encoder: MessagePackEncoder
         private(set) var codingPath: [CodingKey]
         fileprivate(set) var count = 0
@@ -287,7 +287,7 @@ extension MessagePackEncoder {
         }
     }
 
-    class SingleValueContanier: SingleValueEncodingContainer {
+    class SingleValueContainer: SingleValueEncodingContainer {
         private let encoder: MessagePackEncoder
         private(set) var codingPath: [CodingKey]
 
@@ -371,7 +371,7 @@ extension MessagePackEncoder {
 
     class NestedKeyedContainer<NestedKey: CodingKey, Key: CodingKey>: KeyedContainer<NestedKey> {
         private enum Reference {
-            case array(UnkeyedContanier, Int)
+            case array(UnkeyedContainer, Int)
             case dictionary(KeyedContainer<Key>, CodingKey)
         }
 
@@ -382,7 +382,7 @@ extension MessagePackEncoder {
             super.init(referencing: encoder, codingPath: codingPath)
         }
 
-        init(referencing encoder: MessagePackEncoder, codingPath: [CodingKey], container: UnkeyedContanier, index: Int) {
+        init(referencing encoder: MessagePackEncoder, codingPath: [CodingKey], container: UnkeyedContainer, index: Int) {
             reference = .array(container, index)
             super.init(referencing: encoder, codingPath: codingPath)
         }
@@ -398,9 +398,9 @@ extension MessagePackEncoder {
         }
     }
 
-    class NestedUnkeyedContainer<Key: CodingKey>: UnkeyedContanier {
+    class NestedUnkeyedContainer<Key: CodingKey>: UnkeyedContainer {
         private enum Reference {
-            case array(UnkeyedContanier, Int)
+            case array(UnkeyedContainer, Int)
             case dictionary(KeyedContainer<Key>, CodingKey)
         }
 
@@ -411,7 +411,7 @@ extension MessagePackEncoder {
             super.init(referencing: encoder, codingPath: codingPath)
         }
 
-        init(referencing encoder: MessagePackEncoder, codingPath: [CodingKey], container: UnkeyedContanier, index: Int) {
+        init(referencing encoder: MessagePackEncoder, codingPath: [CodingKey], container: UnkeyedContainer, index: Int) {
             reference = .array(container, index)
             super.init(referencing: encoder, codingPath: codingPath)
         }
@@ -443,10 +443,10 @@ extension MessagePackEncoder {
     }
 
     class MessagePackReferencingUnkeyedEncoder: MessagePackEncoder {
-        private let container: UnkeyedContanier
+        private let container: UnkeyedContainer
         private let index: Int
 
-        init(container: UnkeyedContanier, index: Int) {
+        init(container: UnkeyedContainer, index: Int) {
             self.container = container
             self.index = index
             super.init()

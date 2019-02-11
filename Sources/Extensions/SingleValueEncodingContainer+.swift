@@ -10,6 +10,6 @@ import Foundation
 
 extension SingleValueEncodingContainer {
     func encode<T: MessagePackable>(_ value: T) throws {
-        try (self as! MessagePackEncoder.SingleValueContanier).encode(value)
+        try (self as! MessagePackEncoder.SingleValueContainer).encode(value)
     }
 }
