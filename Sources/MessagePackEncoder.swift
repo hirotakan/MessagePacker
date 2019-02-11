@@ -44,7 +44,6 @@ private extension MessagePackEncoder {
     }
 
     func boxInteger<T: BinaryInteger>(_ value: T) -> Data {
-
         return value > 0 ? UInt64(value).pack() : Int64(value).pack()
     }
 
@@ -310,7 +309,7 @@ extension MessagePackEncoder {
         }
     }
 
-    class SingleValueContainer: SingleValueEncodingContainer {
+    struct SingleValueContainer: SingleValueEncodingContainer {
         private let encoder: MessagePackEncoder
         private(set) var codingPath: [CodingKey]
 

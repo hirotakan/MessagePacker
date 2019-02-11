@@ -110,7 +110,7 @@ private extension MessagePackDecoder {
 }
 
 extension MessagePackDecoder {
-    class KeyedContainer<Key: CodingKey>: KeyedDecodingContainerProtocol {
+    struct KeyedContainer<Key: CodingKey>: KeyedDecodingContainerProtocol {
         private let decoder: MessagePackDecoder
         private(set) var codingPath: [CodingKey]
         private(set) var allKeys: [Key]
