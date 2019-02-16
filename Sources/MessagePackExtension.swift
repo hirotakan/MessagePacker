@@ -47,3 +47,11 @@ extension MessagePackExtension: MessagePackable {
         return try MessagePackType.ExtensionType.unpack(for: value)
     }
 }
+
+#if !swift(>=4.1)
+extension MessagePackExtension {
+    public static func == (lhs: MessagePackExtension, rhs: MessagePackExtension) -> Bool {
+        return lhs == rhs
+    }
+}
+#endif
