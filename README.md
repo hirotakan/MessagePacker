@@ -5,6 +5,7 @@
 [![License](https://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Cocoapods](https://img.shields.io/cocoapods/v/MessagePacker.svg)](http://cocoadocs.org/docsets/MessagePacker)
+[![SwiftPM](https://img.shields.io/badge/SwiftPM-compatible-brightgreen.svg)](https://github.com/apple/swift-package-manager)
 ![Platforms](https://img.shields.io/badge/platforms-iOS%20%7C%20macOS%20%7C%20tvOS%20%7C%20watchOS-lightgrey.svg)
 
 **MessagePacker** is a [MessagePack](http://msgpack.org/) encoder & decoder for Swift and supports [Codable](https://developer.apple.com/documentation/swift/codable).
@@ -78,6 +79,21 @@ Add the following to your Podfile:
 
 ```terminal
 pod 'MessagePacker'
+```
+
+### SwiftPM
+
+Add MessagePacker as a dependency:
+
+```swift
+import PackageDescription
+
+let package = Package(
+    name: "YourApp",
+    dependencies: [
+        .Package(url: "https://github.com/hirotakan/MessagePacker.git", majorVersion: 0),
+    ]
+)
 ```
 
 ## Requirements
