@@ -152,6 +152,7 @@
 		459F7991216A5B4B00EBFB43 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		459F7998216B1A8000EBFB43 /* MessagePackDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagePackDecoder.swift; sourceTree = "<group>"; };
 		45B2E7D22197F242004DD86C /* IntegerPackedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegerPackedTests.swift; sourceTree = "<group>"; };
+		45C49EDE221AF09800DB639F /* XCTestManifests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XCTestManifests.swift; sourceTree = "<group>"; };
 		45CF2C37220709B100EC1D06 /* LinuxMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinuxMain.swift; sourceTree = "<group>"; };
 		45EDAFB82199196200E3C44D /* DoublePackedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoublePackedTests.swift; sourceTree = "<group>"; };
 		45EDAFBA21991C5600E3C44D /* DoubleUnpackedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoubleUnpackedTests.swift; sourceTree = "<group>"; };
@@ -300,6 +301,7 @@
 				4506BEA121A248F800D840A4 /* TimestampUnpackedTests.swift */,
 				4506BE912198570700D840A4 /* CustomPackedTests.swift */,
 				4506BE9321985B3700D840A4 /* CustomUnpackedTests.swift */,
+				45C49EDE221AF09800DB639F /* XCTestManifests.swift */,
 			);
 			path = MessagePackerTests;
 			sourceTree = "<group>";
