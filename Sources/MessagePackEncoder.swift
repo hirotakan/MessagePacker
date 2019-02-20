@@ -386,7 +386,7 @@ extension MessagePackEncoder {
             push(try encoder.box(value))
         }
 
-        func encode<T: MessagePackable>(_ value: T) throws {
+        func encode<T: MessagePackable>(from value: T) throws {
             push(encoder.boxMessagePack(value))
         }
     }
