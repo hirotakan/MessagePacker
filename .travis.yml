@@ -1,36 +1,78 @@
-language: objective-c
-os: osx
-osx_image:
-  - xcode9.4
-  - xcode10.1
-
 env:
   global:
-  - SCHEME="MessagePacker"
+    - LC_CTYPE=en_US.UTF-8
+    - SCHEME="MessagePacker"
 
-  matrix:
-  - DESTINATION="name=iPhone X"
-    RUN_TESTS="YES"
+matrix:
+  include:
+    - os: osx
+      language: objective-c
+      osx_image: xcode9.4
+      script:
+        - set -o pipefail
+        - xcodebuild -version
+        - xcodebuild -showsdks
+        - xcodebuild test -scheme "$SCHEME" -destination "name=iPhone X" -configuration Debug | xcpretty
+        - xcodebuild test -scheme "$SCHEME" -destination "arch=x86_64" -configuration Debug | xcpretty
+        - xcodebuild test -scheme "$SCHEME" -destination "name=Apple TV 4K" -configuration Debug | xcpretty
+        - xcodebuild build -scheme "$SCHEME" -destination "OS=8.4,name=iPhone 5" -configuration Debug | xcpretty
+        - xcodebuild build -scheme "$SCHEME" -destination "name=Apple Watch Series 2 - 42mm" -configuration Debug | xcpretty
 
-  - DESTINATION="OS=8.4,name=iPhone 5"
-    RUN_TESTS="NO"
+    - os: osx
+      language: objective-c
+      osx_image: xcode10.1
+      script:
+        - set -o pipefail
+        - xcodebuild -version
+        - xcodebuild -showsdks
+        - xcodebuild test -scheme "$SCHEME" -destination "name=iPhone X" -configuration Debug | xcpretty
+        - xcodebuild test -scheme "$SCHEME" -destination "arch=x86_64" -configuration Debug | xcpretty
+        - xcodebuild test -scheme "$SCHEME" -destination "name=Apple TV 4K" -configuration Debug | xcpretty
+        - xcodebuild build -scheme "$SCHEME" -destination "OS=8.4,name=iPhone 5" -configuration Debug | xcpretty
+        - xcodebuild build -scheme "$SCHEME" -destination "name=Apple Watch Series 2 - 42mm" -configuration Debug | xcpretty
 
-  - DESTINATION="arch=x86_64"
-    RUN_TESTS="YES"
+    - os: osx
+      language: generic
+      osx_image: xcode9.4
+      install:
+        - eval "$(curl -sL https://swiftenv.fuller.li/install.sh)"
+      script:
+        - swift --version
+        - swift build
+        - swift test
 
-  - DESTINATION="name=Apple TV 4K"
-    RUN_TESTS="YES"
+    - os: osx
+      language: generic
+      osx_image: xcode10.1
+      install:
+        - eval "$(curl -sL https://swiftenv.fuller.li/install.sh)"
+      script:
+        - swift --version
+        - swift build
+        - swift test
 
-  - DESTINATION="name=Apple Watch Series 2 - 42mm"
-    RUN_TESTS="NO"
+    - os: linux
+      language: generic
+      sudo: required
+      dist: trusty
+      env:
+        - SWIFT_VERSION=4.1
+      install:
+        - eval "$(curl -sL https://swiftenv.fuller.li/install.sh)"
+      script:
+        - swift --version
+        - swift build
+        - swift test
 
-script:
-  - set -o pipefail
-  - xcodebuild -version
-  - xcodebuild -showsdks
-
-  - if [ $RUN_TESTS == "YES" ]; then
-      xcodebuild test -scheme "$SCHEME" -destination "$DESTINATION" -configuration Debug | xcpretty;
-    else
-      xcodebuild build -scheme "$SCHEME" -destination "$DESTINATION" -configuration Debug | xcpretty;
-    fi
+    - os: linux
+      language: generic
+      sudo: required
+      dist: trusty
+      env:
+        - SWIFT_VERSION=4.2
+      install:
+        - eval "$(curl -sL https://swiftenv.fuller.li/install.sh)"
+      script:
+        - swift --version
+        - swift build
+        - swift test
