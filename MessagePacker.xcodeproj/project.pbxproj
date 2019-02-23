@@ -152,6 +152,8 @@
 		459F7991216A5B4B00EBFB43 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		459F7998216B1A8000EBFB43 /* MessagePackDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagePackDecoder.swift; sourceTree = "<group>"; };
 		45B2E7D22197F242004DD86C /* IntegerPackedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegerPackedTests.swift; sourceTree = "<group>"; };
+		45C49EDE221AF09800DB639F /* XCTestManifests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XCTestManifests.swift; sourceTree = "<group>"; };
+		45CF2C37220709B100EC1D06 /* LinuxMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinuxMain.swift; sourceTree = "<group>"; };
 		45EDAFB82199196200E3C44D /* DoublePackedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoublePackedTests.swift; sourceTree = "<group>"; };
 		45EDAFBA21991C5600E3C44D /* DoubleUnpackedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoubleUnpackedTests.swift; sourceTree = "<group>"; };
 		45EDAFBC21992A5B00E3C44D /* FloatPackedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatPackedTests.swift; sourceTree = "<group>"; };
@@ -265,6 +267,15 @@
 		459F798E216A5B4B00EBFB43 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				45F6BA2B21FD861000BABE3D /* MessagePackerTests */,
+				45CF2C37220709B100EC1D06 /* LinuxMain.swift */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		45F6BA2B21FD861000BABE3D /* MessagePackerTests */ = {
+			isa = PBXGroup;
+			children = (
 				459F7991216A5B4B00EBFB43 /* Info.plist */,
 				4506BE8121980A6A00D840A4 /* NilPackedTests.swift */,
 				4506BE8321980D3200D840A4 /* NilUnpackedTests.swift */,
@@ -290,8 +301,9 @@
 				4506BEA121A248F800D840A4 /* TimestampUnpackedTests.swift */,
 				4506BE912198570700D840A4 /* CustomPackedTests.swift */,
 				4506BE9321985B3700D840A4 /* CustomUnpackedTests.swift */,
+				45C49EDE221AF09800DB639F /* XCTestManifests.swift */,
 			);
-			path = Tests;
+			path = MessagePackerTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -688,7 +700,7 @@
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
-				INFOPLIST_FILE = Tests/Info.plist;
+				INFOPLIST_FILE = Tests/MessagePackerTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -715,7 +727,7 @@
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
-				INFOPLIST_FILE = Tests/Info.plist;
+				INFOPLIST_FILE = Tests/MessagePackerTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

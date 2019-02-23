@@ -23,6 +23,7 @@ class MapUnpackedTests: XCTestCase {
     func testNilMap() {
         let input = Data([129, 161, 49, 192])
         let output: [String: Double?] = ["1": nil]
+
         XCTAssertEqual(try decoder.decode(Dictionary.self, from: input), output)
     }
 
@@ -41,6 +42,7 @@ class MapUnpackedTests: XCTestCase {
     func test2DimensionalMap() {
         let input = Data([129, 161, 97, 129, 161, 98, 2])
         let output = ["a": ["b": 2]]
+
         XCTAssertEqual(try decoder.decode(Dictionary.self, from: input), output)
     }
 }

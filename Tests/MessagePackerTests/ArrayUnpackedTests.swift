@@ -23,6 +23,7 @@ class ArrayUnpackedTests: XCTestCase {
     func testNilArray() {
         let input = Data([149, 1, 192, 32, 192, 205, 1, 224])
         let output: [Int?] = [1, nil, 32, nil, 480]
+
         XCTAssertEqual(try decoder.decode(Array.self, from: input), output)
     }
 
@@ -35,6 +36,7 @@ class ArrayUnpackedTests: XCTestCase {
     func test2DimensionalArray() {
         let input = Data([146, 147, 1, 32, 205, 1, 224, 147, 10, 205, 1, 64, 205, 18, 192])
         let output = [[1 ,32, 480],[10 ,320, 4800]]
+
         XCTAssertEqual(try decoder.decode(Array.self, from: input), output)
     }
 
