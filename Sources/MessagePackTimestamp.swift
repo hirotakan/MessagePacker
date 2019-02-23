@@ -62,11 +62,3 @@ extension MessagePackTimestamp: MessagePackable {
         return try MessagePackTimestamp(extension: ext)
     }
 }
-
-#if !swift(>=4.1)
-extension MessagePackTimestamp {
-    public static func == (lhs: MessagePackTimestamp, rhs: MessagePackTimestamp) -> Bool {
-        return lhs == rhs
-    }
-}
-#endif

@@ -63,7 +63,6 @@
 		4554BED821C4AE0200CEB4EA /* MessagePackType+ArrayType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4554BED721C4AE0200CEB4EA /* MessagePackType+ArrayType.swift */; };
 		4554BEDA21C4AED500CEB4EA /* MessagePackType+MapType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4554BED921C4AED500CEB4EA /* MessagePackType+MapType.swift */; };
 		4554BEDC21C4AFA000CEB4EA /* MessagePackType+ExtensionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4554BEDB21C4AFA000CEB4EA /* MessagePackType+ExtensionType.swift */; };
-		458AE662221112C000EC7414 /* Sequence+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 458AE661221112C000EC7414 /* Sequence+.swift */; };
 		459F79642160F2D600EBFB43 /* MessagePacker.h in Headers */ = {isa = PBXBuildFile; fileRef = 459F79622160F2D600EBFB43 /* MessagePacker.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		459F79862160F56F00EBFB43 /* MessagePackable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459F79852160F56F00EBFB43 /* MessagePackable.swift */; };
 		459F798821698E3800EBFB43 /* MessagePackEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459F798721698E3800EBFB43 /* MessagePackEncoder.swift */; };
@@ -144,7 +143,6 @@
 		4554BED721C4AE0200CEB4EA /* MessagePackType+ArrayType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessagePackType+ArrayType.swift"; sourceTree = "<group>"; };
 		4554BED921C4AED500CEB4EA /* MessagePackType+MapType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessagePackType+MapType.swift"; sourceTree = "<group>"; };
 		4554BEDB21C4AFA000CEB4EA /* MessagePackType+ExtensionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessagePackType+ExtensionType.swift"; sourceTree = "<group>"; };
-		458AE661221112C000EC7414 /* Sequence+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sequence+.swift"; sourceTree = "<group>"; };
 		459F795F2160F2D600EBFB43 /* MessagePacker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MessagePacker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		459F79622160F2D600EBFB43 /* MessagePacker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessagePacker.h; sourceTree = "<group>"; };
 		459F79632160F2D600EBFB43 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -222,7 +220,6 @@
 				45249BA521C76E580070CB6C /* ClosedRange+.swift */,
 				45249BA721C76E9A0070CB6C /* SingleValueEncodingContainer+.swift */,
 				45249BA921C76EC90070CB6C /* SingleValueDecodingContainer+.swift */,
-				458AE661221112C000EC7414 /* Sequence+.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -426,7 +423,6 @@
 				45249B9221C76D5B0070CB6C /* UInt+.swift in Sources */,
 				45249B8821C76CE50070CB6C /* Int+.swift in Sources */,
 				459F7999216B1A8000EBFB43 /* MessagePackDecoder.swift in Sources */,
-				458AE662221112C000EC7414 /* Sequence+.swift in Sources */,
 				4554BED421C4AAE100CEB4EA /* MessagePackType+StringType.swift in Sources */,
 				45249B9C21C76DDF0070CB6C /* Float+.swift in Sources */,
 				459F79862160F56F00EBFB43 /* MessagePackable.swift in Sources */,
