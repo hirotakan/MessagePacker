@@ -81,7 +81,7 @@ pod 'MessagePacker'
 ```
 
 ## Requirements
- - Swift 4.0 or later
+ - Swift 4.1 or later
  - iOS 8.0 or later
  - macOS 10.10 or later
  - tvOS 9.0 or later
