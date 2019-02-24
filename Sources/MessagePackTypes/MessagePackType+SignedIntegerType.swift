@@ -90,18 +90,25 @@ extension MessagePackType.SignedIntegerType {
 extension MessagePackType.SignedIntegerType {
     static func pack<T: BinaryInteger>(for value: T) -> Data {
         let type = MessagePackType.SignedIntegerType(value)
-        let firstByte = type.firstByte.map { Data([$0]) } ?? packInteger(for: Int8(value).bigEndian)
         switch type {
         case .fixint:
-            return firstByte
+            return packInteger(for: Int8(value).bigEndian)
         case .int8:
-            return firstByte + packInteger(for: Int8(value).bigEndian)
+            var data = Data([type.firstByte!])
+            data.append(packInteger(for: Int8(value).bigEndian))
+            return data
         case .int16:
-            return firstByte + packInteger(for: Int16(value).bigEndian)
+            var data = Data([type.firstByte!])
+            data.append(packInteger(for: Int16(value).bigEndian))
+            return data
         case .int32:
-            return firstByte + packInteger(for: Int32(value).bigEndian)
+            var data = Data([type.firstByte!])
+            data.append(packInteger(for: Int32(value).bigEndian))
+            return data
         case .int64:
-            return firstByte + packInteger(for: Int64(value).bigEndian)
+            var data = Data([type.firstByte!])
+            data.append(packInteger(for: Int64(value).bigEndian))
+            return data
         }
     }
 
