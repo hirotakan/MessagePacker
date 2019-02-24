@@ -53,6 +53,8 @@ private extension MessagePackEncoder {
 
     func box<T : Encodable>(_ value: T) throws -> Data {
         switch T.self {
+        case let type where type == Bool.self:
+            return boxMessagePack(value as! Bool)
         case let type where type == Data.self || type == NSData.self:
             return boxMessagePack(value as! Data)
         case let type where type == Date.self || type == NSDate.self:
