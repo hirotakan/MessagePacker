@@ -17,8 +17,7 @@ extension MessagePackType {
 }
 
 extension MessagePackType.BinaryType {
-    init(_ value: Data) {
-        let count = value.count
+    init(_ count: Int) {
         if count < 0x100 {
             self = .binary8
         } else if count < 0x10000 {
@@ -94,16 +93,18 @@ extension MessagePackType.BinaryType {
 extension MessagePackType.BinaryType {
     static func pack(for value: Data) -> Data {
         let count = value.count
-        let type = MessagePackType.BinaryType(value)
-        let firstByte = Data([type.firstByte])
+        let type = MessagePackType.BinaryType(count)
+        var data = Data([type.firstByte])
         switch type {
         case .binary8:
-            return firstByte + packInteger(for: UInt8(count).bigEndian) + value
+            data.append(packInteger(for: UInt8(count).bigEndian))
         case .binary16:
-            return firstByte + packInteger(for: UInt16(count).bigEndian) + value
+            data.append(packInteger(for: UInt16(count).bigEndian))
         case .binary32:
-            return firstByte + packInteger(for: UInt32(count).bigEndian) + value
+            data.append(packInteger(for: UInt32(count).bigEndian))
         }
+        data.append(value)
+        return data
     }
 
     static func unpack(for value: Data) throws -> Data {
