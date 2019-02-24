@@ -110,7 +110,8 @@ extension MessagePackEncoder {
 
         fileprivate func add(_ value: Data, forKey key: CodingKey) {
             let key = encoder.boxMessagePack(key.stringValue)
-            self.packedData += key + value
+            self.packedData.append(key)
+            self.packedData.append(value)
             count += 1
         }
 

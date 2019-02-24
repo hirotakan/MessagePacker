@@ -121,14 +121,21 @@ extension MessagePackType.MapType {
 
     static func pack(count: Int, value: Data) -> Data {
         let type = MessagePackType.MapType(count)
-        let firstByte = type.firstByte.map { Data([$0]) } ?? Data([MessagePackType.MapType.fixFirstByteRange.lowerBound | UInt8(count)])
         switch type {
         case .fixmap:
-            return firstByte + value
+            var data = Data([MessagePackType.MapType.fixFirstByteRange.lowerBound | UInt8(count)])
+            data.append(value)
+            return data
         case .map16:
-            return firstByte + packInteger(for: UInt16(count).bigEndian) + value
+            var data = Data([type.firstByte!])
+            data.append(packInteger(for: UInt16(count).bigEndian) + value)
+            data.append(value)
+            return data
         case .map32:
-            return firstByte + packInteger(for: UInt32(count).bigEndian) + value
+            var data = Data([type.firstByte!])
+            data.append(packInteger(for: UInt32(count).bigEndian) + value)
+            data.append(value)
+            return data
         }
     }
 }
