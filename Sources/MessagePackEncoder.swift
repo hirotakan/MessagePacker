@@ -65,6 +65,16 @@ private extension MessagePackEncoder {
             return boxInteger(value as! Int32)
         case let type where type == Int64.self:
             return boxInteger(value as! Int64)
+        case let type where type == UInt.self:
+            return boxInteger(value as! UInt)
+        case let type where type == UInt8.self:
+            return boxInteger(value as! UInt8)
+        case let type where type == UInt16.self:
+            return boxInteger(value as! UInt16)
+        case let type where type == UInt32.self:
+            return boxInteger(value as! UInt32)
+        case let type where type == UInt64.self:
+            return boxInteger(value as! UInt64)
         case let type where type == Data.self || type == NSData.self:
             return boxMessagePack(value as! Data)
         case let type where type == Date.self || type == NSDate.self:
