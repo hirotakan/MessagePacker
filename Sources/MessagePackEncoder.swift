@@ -235,7 +235,7 @@ extension MessagePackEncoder {
         }
 
         private func add(_ value: Data) {
-            packedData += value
+            packedData.append(value)
             count += 1
         }
 
