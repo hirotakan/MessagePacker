@@ -77,6 +77,8 @@ private extension MessagePackEncoder {
             return boxInteger(value as! UInt64)
         case let type where type == Float.self:
             return boxMessagePack(value as! Float)
+        case let type where type == Double.self:
+            return boxMessagePack(value as! Double)
         case let type where type == Data.self || type == NSData.self:
             return boxMessagePack(value as! Data)
         case let type where type == Date.self || type == NSDate.self:
