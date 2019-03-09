@@ -288,7 +288,8 @@ extension MessagePackDecoder {
         }
 
         var currentCodingPath: [CodingKey] {
-            return decoder.codingPath + [MessagePackKey(index: currentIndex)]
+            decoder.codingPath.append(MessagePackKey(index: currentIndex))
+            return decoder.codingPath
         }
 
         private(set) var currentIndex = 0
@@ -303,8 +304,7 @@ extension MessagePackDecoder {
         func validateIndex<T>(_ type: T.Type) throws {
             guard isAtEnd else { return }
 
-            let currentCodingPath = decoder.codingPath + [MessagePackKey(index: currentIndex)]
-            let context = DecodingError.Context(codingPath: currentCodingPath, debugDescription: "Unkeyed container is at end.")
+            let context = DecodingError.Context(codingPath: self.currentCodingPath, debugDescription: "Unkeyed container is at end.")
             throw DecodingError.valueNotFound(T.self, context)
         }
 
