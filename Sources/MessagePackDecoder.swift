@@ -69,6 +69,10 @@ open class MessagePackDecoder: Decoder {
 }
 
 private extension MessagePackDecoder {
+    func unboxNil(_ value: Data) -> Bool {
+        return value.first.map { $0 == MessagePackType.NilType.firstByte } ?? false
+    }
+
     func unboxURL(_ value: Data) throws -> URL {
         let urlString = try String.unpack(for: value)
         guard let url = URL(string: urlString) else {
@@ -143,7 +147,7 @@ extension MessagePackDecoder {
         }
 
         func decodeNil(forKey key: Key) throws -> Bool {
-            return try findEntry(by: key).first.map { $0 == MessagePackType.NilType.firstByte } ?? false
+            return decoder.unboxNil(try findEntry(by: key))
         }
 
         func decode(_ type: Bool.Type, forKey key: Key) throws -> Bool {
@@ -302,7 +306,7 @@ extension MessagePackDecoder {
 
         mutating func decodeNil() throws -> Bool {
             try validateIndex(Data?.self)
-            return container[currentIndex].first.map { $0 == MessagePackType.NilType.firstByte } ?? false
+            return decoder.unboxNil(container[currentIndex])
         }
 
         mutating func decode(_ type: Bool.Type) throws -> Bool {
@@ -446,7 +450,7 @@ extension MessagePackDecoder {
         }
 
         func decodeNil() -> Bool {
-            return container.first.map { $0 == MessagePackType.NilType.firstByte } ?? false
+            return decoder.unboxNil(container)
         }
 
         func decode(_ type: Bool.Type) throws -> Bool {
