@@ -155,6 +155,13 @@ extension MessagePackDecoder {
             return try decoder.unboxMessagePack(entry, as: type)
         }
 
+        func decode<T: BinaryInteger & MessagePackable>(as type: T.Type, forKey key: Key) throws -> T where T.T == T {
+            decoder.codingPath.append(key)
+            defer { decoder.codingPath.removeLast() }
+            let entry = try findEntry(by: key)
+            return try decoder.unboxInteger(entry, as: type)
+        }
+
         func decodeNil(forKey key: Key) throws -> Bool {
             return decoder.unboxNil(try findEntry(by: key))
         }
@@ -311,6 +318,18 @@ extension MessagePackDecoder {
             currentIndex += 1
 
             return try decoder.unboxMessagePack(value, as: type)
+        }
+
+        mutating func decode<T: BinaryInteger & MessagePackable>(as type: T.Type) throws -> T where T.T == T {
+            try validateIndex(type)
+
+            decoder.codingPath.append(MessagePackKey(index: currentIndex))
+            defer { decoder.codingPath.removeLast() }
+
+            let value = container[currentIndex]
+            currentIndex += 1
+
+            return try decoder.unboxInteger(value, as: type)
         }
 
         mutating func decodeNil() throws -> Bool {
