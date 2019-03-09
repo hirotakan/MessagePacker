@@ -20,6 +20,12 @@ class CustomUnpackedTests: XCTestCase {
         super.tearDown()
     }
 
+    func testCustomClass() {
+        let input = Data([129, 168, 108, 101, 103, 67, 111, 117, 110, 116, 206, 1, 107, 8, 108])
+        let output = Animal(legCount: 23791724)
+        XCTAssertEqual(try decoder.decode(Animal.self, from: input), output)
+    }
+
     func testCustomSubClass() {
         let input = Data([130, 164, 110, 97, 109, 101, 169, 227, 131, 158, 227, 130, 181, 227, 131, 171, 165, 115, 117, 112, 101, 114, 129, 168, 108, 101, 103, 67, 111, 117, 110, 116, 4])
         let output = Dog(legCount: 4, name: "マサル")
