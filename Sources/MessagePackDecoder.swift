@@ -96,6 +96,15 @@ private extension MessagePackDecoder {
         }
     }
 
+    func unboxInteger<T: BinaryInteger & MessagePackable>(_ value: Data, as type: T.Type) throws -> T where T.T == T {
+        if let firstByte = value.first,
+            let _ = try? MessagePackType.UnsignedIntegerType(firstByte) {
+            return T(try unboxMessagePack(value, as: UInt.self))
+        } else {
+            return try unboxMessagePack(value, as: type)
+        }
+    }
+
     func unbox<T: Decodable>(_ value: Data, as type: T.Type) throws -> T {
         storage.push(container: value)
         defer { _ = storage.popContainer() }
@@ -442,11 +451,11 @@ extension MessagePackDecoder {
         }
 
         func decode<T: MessagePackable>(as type: T.Type) throws -> T where T.T == T {
-            return try decode(container, as: type)
+            return try decoder.unboxMessagePack(container, as: type)
         }
 
-        func decode<T: MessagePackable>(_ data: Data, as type: T.Type) throws -> T where T.T == T {
-            return try decoder.unboxMessagePack(data, as: type)
+        func decode<T: BinaryInteger & MessagePackable>(as type: T.Type) throws -> T where T.T == T {
+            return try decoder.unboxInteger(container, as: type)
         }
 
         func decodeNil() -> Bool {
@@ -458,12 +467,7 @@ extension MessagePackDecoder {
         }
 
         func decode(_ type: Int.Type) throws -> Int {
-            if let firstByte = container.first,
-               let _ = try? MessagePackType.UnsignedIntegerType(firstByte) {
-                return Int(try decode(as: UInt.self))
-            } else {
-                return try decode(as: type)
-            }
+            return try decode(as: type)
         }
 
         func decode(_ type: Int8.Type) throws -> Int8 {
