@@ -9,7 +9,7 @@
 import XCTest
 @testable import MessagePacker
 
-class Animal: Codable {
+class Animal: Codable, Equatable {
     var legCount: Int
 
     private enum CodingKeys: String, CodingKey {
@@ -31,12 +31,13 @@ class Animal: Codable {
     }
 }
 
-class Dog: Animal, Equatable {
-    static func == (lhs: Dog, rhs: Dog) -> Bool {
+extension Animal {
+    static func == (lhs: Animal, rhs: Animal) -> Bool {
         return lhs.legCount == rhs.legCount
-            && lhs.name == rhs.name
     }
+}
 
+class Dog: Animal {
     var name: String
 
     private enum CodingKeys: String, CodingKey {
@@ -60,6 +61,13 @@ class Dog: Animal, Equatable {
         name = try container.decode(String.self, forKey: .name)
         let superDecoder = try container.superDecoder()
         try super.init(from: superDecoder)
+    }
+}
+
+extension Dog {
+    static func == (lhs: Dog, rhs: Dog) -> Bool {
+        return lhs.legCount == rhs.legCount
+            && lhs.name == rhs.name
     }
 }
 
