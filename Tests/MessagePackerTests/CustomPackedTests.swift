@@ -91,4 +91,10 @@ class CustomPackedTests: XCTestCase {
         let output = Data([185, 104, 116, 116, 112, 115, 58, 47, 47, 119, 119, 119, 46, 103, 111, 111, 103, 108, 101, 46, 99, 111, 46, 106, 112, 47])
         XCTAssertEqual(try encoder.encode(input), output)
     }
+
+    func testCustomUnkeyedCollection() {
+        let input: CustomUnkeyedCollection = [1, 2000, 23791724]
+        let output = Data([147, 1, 205, 7, 208, 206, 1, 107, 8, 108])
+        XCTAssertEqual(try encoder.encode(input), output)
+    }
 }
