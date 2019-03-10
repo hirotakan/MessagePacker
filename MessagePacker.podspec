@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name         = "MessagePacker"
-  s.version      = "0.3.0"
+  s.version      = "0.3.1"
   s.summary      = "MessagePack serializer implementation for Swift."
   s.homepage     = "https://github.com/hirotakan/MessagePacker"
   s.license      = { :type => "MIT", :file => "LICENSE" }
