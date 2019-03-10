@@ -46,7 +46,8 @@ extension BoolUnpackedTests {
 
 extension CustomPackedTests {
     static let __allTests = [
-        ("testCustom", testCustom),
+        ("testCustomClass", testCustomClass),
+        ("testCustomSubClass", testCustomSubClass),
         ("testCustomkeyedCollection", testCustomkeyedCollection),
         ("testCustomUnkeyedCollection", testCustomUnkeyedCollection),
         ("testDate", testDate),
@@ -56,7 +57,8 @@ extension CustomPackedTests {
 
 extension CustomUnpackedTests {
     static let __allTests = [
-        ("testCustom", testCustom),
+        ("testCustomClass", testCustomClass),
+        ("testCustomSubClass", testCustomSubClass),
         ("testCustomkeyedCollection", testCustomkeyedCollection),
         ("testCustomUnkeyedCollection", testCustomUnkeyedCollection),
         ("testDate", testDate),

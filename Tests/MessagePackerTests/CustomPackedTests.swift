@@ -9,7 +9,7 @@
 import XCTest
 @testable import MessagePacker
 
-class Animal: Codable {
+class Animal: Codable, Equatable {
     var legCount: Int
 
     private enum CodingKeys: String, CodingKey {
@@ -31,12 +31,13 @@ class Animal: Codable {
     }
 }
 
-class Dog: Animal, Equatable {
-    static func == (lhs: Dog, rhs: Dog) -> Bool {
+extension Animal {
+    static func == (lhs: Animal, rhs: Animal) -> Bool {
         return lhs.legCount == rhs.legCount
-            && lhs.name == rhs.name
     }
+}
 
+class Dog: Animal {
     var name: String
 
     private enum CodingKeys: String, CodingKey {
@@ -63,6 +64,13 @@ class Dog: Animal, Equatable {
     }
 }
 
+extension Dog {
+    static func == (lhs: Dog, rhs: Dog) -> Bool {
+        return lhs.legCount == rhs.legCount
+            && lhs.name == rhs.name
+    }
+}
+
 class CustomPackedTests: XCTestCase {
     let encoder = MessagePackEncoder()
 
@@ -74,7 +82,13 @@ class CustomPackedTests: XCTestCase {
         super.tearDown()
     }
 
-    func testCustom() {
+    func testCustomClass() {
+        let input = Animal(legCount: 23791724)
+        let output = Data([129, 168, 108, 101, 103, 67, 111, 117, 110, 116, 206, 1, 107, 8, 108])
+        XCTAssertEqual(try encoder.encode(input), output)
+    }
+
+    func testCustomSubClass() {
         let input = Dog(legCount: 4, name: "マサル")
         let output = Data([130, 164, 110, 97, 109, 101, 169, 227, 131, 158, 227, 130, 181, 227, 131, 171, 165, 115, 117, 112, 101, 114, 129, 168, 108, 101, 103, 67, 111, 117, 110, 116, 4])
         XCTAssertEqual(try encoder.encode(input), output)
