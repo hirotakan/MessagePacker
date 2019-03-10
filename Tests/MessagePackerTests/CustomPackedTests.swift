@@ -105,22 +105,22 @@ class CustomPackedTests: XCTestCase {
         do {
             let result = try encoder.encode(input)
             let dic = try (0..<input.count)
-                .reduce(into: (dic: [[UInt8] : [UInt8]](), index: 1)) { args, _ in
+                .reduce(into: (dic: [Data : Data](), index: 1)) { args, _ in
                     let key = try result
                         .subdata(startIndex: args.index)
                         .firstMessagePackeValue()
                     let value = try result
                         .subdata(startIndex: args.index + key.count)
                         .firstMessagePackeValue()
-                    args.dic[[UInt8](key)] = [UInt8](value)
+                    args.dic[key] = value
                     args.index += (key.count + value.count)
                 }.dic
 
             XCTAssertEqual(result.count, output.count)
             XCTAssertEqual(result.first, output.first)
-            XCTAssertEqual(dic[[161, 97]], [1])
-            XCTAssertEqual(dic[[161, 98]], [205, 7, 208])
-            XCTAssertEqual(dic[[161, 99]], [206, 1, 107, 8, 108])
+            XCTAssertEqual(dic[Data([161, 97])], Data([1]))
+            XCTAssertEqual(dic[Data([161, 98])], Data([205, 7, 208]))
+            XCTAssertEqual(dic[Data([161, 99])], Data([206, 1, 107, 8, 108]))
         } catch {
             XCTFail(error.localizedDescription)
         }
