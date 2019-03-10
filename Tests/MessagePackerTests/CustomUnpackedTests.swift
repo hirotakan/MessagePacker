@@ -37,4 +37,24 @@ class CustomUnpackedTests: XCTestCase {
         let output = URL(string: "https://www.google.co.jp/")!
         XCTAssertEqual(try decoder.decode(URL.self, from: input), output)
     }
+
+    func testCustomUnkeyedCollection() {
+        let input = Data([147, 1, 205, 7, 208, 206, 1, 107, 8, 108])
+        let output: CustomUnkeyedCollection = [1, 2000, 23791724]
+        XCTAssertEqual(try decoder.decode(CustomUnkeyedCollection.self, from: input), output)
+    }
+
+    func testCustomkeyedCollection() {
+        let input = Data([131, 161, 98, 205, 7, 208, 161, 99, 206, 1, 107, 8, 108, 161, 97, 1])
+        let output: CustomkeyedCollection = ["a": 1, "b": 2000, "c": 23791724]
+
+        do {
+            let result = try decoder.decode(CustomkeyedCollection.self, from: input)
+            XCTAssertEqual(result["a"], output["a"])
+            XCTAssertEqual(result["b"], output["b"])
+            XCTAssertEqual(result["c"], output["c"])
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
 }

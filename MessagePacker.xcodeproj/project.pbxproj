@@ -63,6 +63,8 @@
 		4554BED821C4AE0200CEB4EA /* MessagePackType+ArrayType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4554BED721C4AE0200CEB4EA /* MessagePackType+ArrayType.swift */; };
 		4554BEDA21C4AED500CEB4EA /* MessagePackType+MapType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4554BED921C4AED500CEB4EA /* MessagePackType+MapType.swift */; };
 		4554BEDC21C4AFA000CEB4EA /* MessagePackType+ExtensionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4554BEDB21C4AFA000CEB4EA /* MessagePackType+ExtensionType.swift */; };
+		456EF9CF222C0DF800C11413 /* CustomkeyedCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456EF9CE222C0DF800C11413 /* CustomkeyedCollection.swift */; };
+		456EF9D1222C0E3E00C11413 /* CustomUnkeyedCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456EF9D0222C0E3E00C11413 /* CustomUnkeyedCollection.swift */; };
 		459F79642160F2D600EBFB43 /* MessagePacker.h in Headers */ = {isa = PBXBuildFile; fileRef = 459F79622160F2D600EBFB43 /* MessagePacker.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		459F79862160F56F00EBFB43 /* MessagePackable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459F79852160F56F00EBFB43 /* MessagePackable.swift */; };
 		459F798821698E3800EBFB43 /* MessagePackEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459F798721698E3800EBFB43 /* MessagePackEncoder.swift */; };
@@ -143,6 +145,8 @@
 		4554BED721C4AE0200CEB4EA /* MessagePackType+ArrayType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessagePackType+ArrayType.swift"; sourceTree = "<group>"; };
 		4554BED921C4AED500CEB4EA /* MessagePackType+MapType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessagePackType+MapType.swift"; sourceTree = "<group>"; };
 		4554BEDB21C4AFA000CEB4EA /* MessagePackType+ExtensionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessagePackType+ExtensionType.swift"; sourceTree = "<group>"; };
+		456EF9CE222C0DF800C11413 /* CustomkeyedCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomkeyedCollection.swift; sourceTree = "<group>"; };
+		456EF9D0222C0E3E00C11413 /* CustomUnkeyedCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomUnkeyedCollection.swift; sourceTree = "<group>"; };
 		459F795F2160F2D600EBFB43 /* MessagePacker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MessagePacker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		459F79622160F2D600EBFB43 /* MessagePacker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessagePacker.h; sourceTree = "<group>"; };
 		459F79632160F2D600EBFB43 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -302,6 +306,8 @@
 				4506BE912198570700D840A4 /* CustomPackedTests.swift */,
 				4506BE9321985B3700D840A4 /* CustomUnpackedTests.swift */,
 				45C49EDE221AF09800DB639F /* XCTestManifests.swift */,
+				456EF9CE222C0DF800C11413 /* CustomkeyedCollection.swift */,
+				456EF9D0222C0E3E00C11413 /* CustomUnkeyedCollection.swift */,
 			);
 			path = MessagePackerTests;
 			sourceTree = "<group>";
@@ -475,6 +481,7 @@
 				45EDAFBF21992CA500E3C44D /* FloatUnpackedTests.swift in Sources */,
 				4506BE8E21983B2200D840A4 /* ExtensionPackedTests.swift in Sources */,
 				4506BE8221980A6A00D840A4 /* NilPackedTests.swift in Sources */,
+				456EF9CF222C0DF800C11413 /* CustomkeyedCollection.swift in Sources */,
 				4506BE9E219B20C700D840A4 /* BinaryUnpackedTests.swift in Sources */,
 				4506BE9421985B3700D840A4 /* CustomUnpackedTests.swift in Sources */,
 				4506BE962198845900D840A4 /* StringPackedTests.swift in Sources */,
@@ -488,6 +495,7 @@
 				45EDAFBB21991C5600E3C44D /* DoubleUnpackedTests.swift in Sources */,
 				4506BE9021983BD200D840A4 /* ExtensionUnpackedTests.swift in Sources */,
 				45EDAFBD21992A5B00E3C44D /* FloatPackedTests.swift in Sources */,
+				456EF9D1222C0E3E00C11413 /* CustomUnkeyedCollection.swift in Sources */,
 				4506BE922198570700D840A4 /* CustomPackedTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

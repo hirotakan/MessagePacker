@@ -69,6 +69,10 @@ open class MessagePackDecoder: Decoder {
 }
 
 private extension MessagePackDecoder {
+    func unboxNil(_ value: Data) -> Bool {
+        return value.first.map { $0 == MessagePackType.NilType.firstByte } ?? false
+    }
+
     func unboxURL(_ value: Data) throws -> URL {
         let urlString = try String.unpack(for: value)
         guard let url = URL(string: urlString) else {
@@ -89,6 +93,15 @@ private extension MessagePackDecoder {
             throw error.asDecodingError([Any].self, codingPath: codingPath)
         } catch {
             throw error
+        }
+    }
+
+    func unboxInteger<T: BinaryInteger & MessagePackable>(_ value: Data, as type: T.Type) throws -> T where T.T == T {
+        if let firstByte = value.first,
+            let _ = try? MessagePackType.UnsignedIntegerType(firstByte) {
+            return T(try unboxMessagePack(value, as: UInt.self))
+        } else {
+            return try unboxMessagePack(value, as: type)
         }
     }
 
@@ -142,8 +155,15 @@ extension MessagePackDecoder {
             return try decoder.unboxMessagePack(entry, as: type)
         }
 
+        func decode<T: BinaryInteger & MessagePackable>(as type: T.Type, forKey key: Key) throws -> T where T.T == T {
+            decoder.codingPath.append(key)
+            defer { decoder.codingPath.removeLast() }
+            let entry = try findEntry(by: key)
+            return try decoder.unboxInteger(entry, as: type)
+        }
+
         func decodeNil(forKey key: Key) throws -> Bool {
-            return try findEntry(by: key).first.map { $0 == MessagePackType.NilType.firstByte } ?? false
+            return decoder.unboxNil(try findEntry(by: key))
         }
 
         func decode(_ type: Bool.Type, forKey key: Key) throws -> Bool {
@@ -300,9 +320,21 @@ extension MessagePackDecoder {
             return try decoder.unboxMessagePack(value, as: type)
         }
 
+        mutating func decode<T: BinaryInteger & MessagePackable>(as type: T.Type) throws -> T where T.T == T {
+            try validateIndex(type)
+
+            decoder.codingPath.append(MessagePackKey(index: currentIndex))
+            defer { decoder.codingPath.removeLast() }
+
+            let value = container[currentIndex]
+            currentIndex += 1
+
+            return try decoder.unboxInteger(value, as: type)
+        }
+
         mutating func decodeNil() throws -> Bool {
             try validateIndex(Data?.self)
-            return container[currentIndex].first.map { $0 == MessagePackType.NilType.firstByte } ?? false
+            return decoder.unboxNil(container[currentIndex])
         }
 
         mutating func decode(_ type: Bool.Type) throws -> Bool {
@@ -438,15 +470,15 @@ extension MessagePackDecoder {
         }
 
         func decode<T: MessagePackable>(as type: T.Type) throws -> T where T.T == T {
-            return try decode(container, as: type)
+            return try decoder.unboxMessagePack(container, as: type)
         }
 
-        func decode<T: MessagePackable>(_ data: Data, as type: T.Type) throws -> T where T.T == T {
-            return try decoder.unboxMessagePack(data, as: type)
+        func decode<T: BinaryInteger & MessagePackable>(as type: T.Type) throws -> T where T.T == T {
+            return try decoder.unboxInteger(container, as: type)
         }
 
         func decodeNil() -> Bool {
-            return container.first.map { $0 == MessagePackType.NilType.firstByte } ?? false
+            return decoder.unboxNil(container)
         }
 
         func decode(_ type: Bool.Type) throws -> Bool {
@@ -454,12 +486,7 @@ extension MessagePackDecoder {
         }
 
         func decode(_ type: Int.Type) throws -> Int {
-            if let firstByte = container.first,
-               let _ = try? MessagePackType.UnsignedIntegerType(firstByte) {
-                return Int(try decode(as: UInt.self))
-            } else {
-                return try decode(as: type)
-            }
+            return try decode(as: type)
         }
 
         func decode(_ type: Int8.Type) throws -> Int8 {

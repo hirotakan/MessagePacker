@@ -91,4 +91,38 @@ class CustomPackedTests: XCTestCase {
         let output = Data([185, 104, 116, 116, 112, 115, 58, 47, 47, 119, 119, 119, 46, 103, 111, 111, 103, 108, 101, 46, 99, 111, 46, 106, 112, 47])
         XCTAssertEqual(try encoder.encode(input), output)
     }
+
+    func testCustomUnkeyedCollection() {
+        let input: CustomUnkeyedCollection = [1, 2000, 23791724]
+        let output = Data([147, 1, 205, 7, 208, 206, 1, 107, 8, 108])
+        XCTAssertEqual(try encoder.encode(input), output)
+    }
+
+    func testCustomkeyedCollection() {
+        let input: CustomkeyedCollection = ["a": 1, "b": 2000, "c": 23791724]
+        let output = Data([131, 161, 98, 205, 7, 208, 161, 99, 206, 1, 107, 8, 108, 161, 97, 1])
+
+        do {
+            let result = try encoder.encode(input)
+            let dic = try (0..<input.count)
+                .reduce(into: (dic: [Data : Data](), index: 1)) { args, _ in
+                    let key = try result
+                        .subdata(startIndex: args.index)
+                        .firstMessagePackeValue()
+                    let value = try result
+                        .subdata(startIndex: args.index + key.count)
+                        .firstMessagePackeValue()
+                    args.dic[key] = value
+                    args.index += (key.count + value.count)
+                }.dic
+
+            XCTAssertEqual(result.count, output.count)
+            XCTAssertEqual(result.first, output.first)
+            XCTAssertEqual(dic[Data([161, 97])], Data([1]))
+            XCTAssertEqual(dic[Data([161, 98])], Data([205, 7, 208]))
+            XCTAssertEqual(dic[Data([161, 99])], Data([206, 1, 107, 8, 108]))
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
 }
