@@ -12,11 +12,11 @@ matrix:
         - set -o pipefail
         - xcodebuild -version
         - xcodebuild -showsdks
-        - xcodebuild test -scheme "$SCHEME" -destination "name=iPhone X" -configuration Debug | xcpretty
-        - xcodebuild test -scheme "$SCHEME" -destination "arch=x86_64" -configuration Debug | xcpretty
-        - xcodebuild test -scheme "$SCHEME" -destination "name=Apple TV 4K" -configuration Debug | xcpretty
-        - xcodebuild build -scheme "$SCHEME" -destination "OS=8.4,name=iPhone 5" -configuration Debug | xcpretty
-        - xcodebuild build -scheme "$SCHEME" -destination "name=Apple Watch Series 2 - 42mm" -configuration Debug | xcpretty
+        - xcodebuild test -scheme "$SCHEME" -destination "name=iPhone X" -configuration Release ENABLE_TESTABILITY=YES | xcpretty
+        - xcodebuild test -scheme "$SCHEME" -destination "arch=x86_64" -configuration Release ENABLE_TESTABILITY=YES | xcpretty
+        - xcodebuild test -scheme "$SCHEME" -destination "name=Apple TV 4K" -configuration Release ENABLE_TESTABILITY=YES | xcpretty
+        - xcodebuild build -scheme "$SCHEME" -destination "OS=8.4,name=iPhone 5" -configuration Release ENABLE_TESTABILITY=YES | xcpretty
+        - xcodebuild build -scheme "$SCHEME" -destination "name=Apple Watch Series 2 - 42mm" -configuration Release ENABLE_TESTABILITY=YES | xcpretty
 
     - os: osx
       language: objective-c
@@ -25,11 +25,11 @@ matrix:
         - set -o pipefail
         - xcodebuild -version
         - xcodebuild -showsdks
-        - xcodebuild test -scheme "$SCHEME" -destination "name=iPhone X" -configuration Debug | xcpretty
-        - xcodebuild test -scheme "$SCHEME" -destination "arch=x86_64" -configuration Debug | xcpretty
-        - xcodebuild test -scheme "$SCHEME" -destination "name=Apple TV 4K" -configuration Debug | xcpretty
-        - xcodebuild build -scheme "$SCHEME" -destination "OS=8.4,name=iPhone 5" -configuration Debug | xcpretty
-        - xcodebuild build -scheme "$SCHEME" -destination "name=Apple Watch Series 2 - 42mm" -configuration Debug | xcpretty
+        - xcodebuild test -scheme "$SCHEME" -destination "name=iPhone X" -configuration Release ENABLE_TESTABILITY=YES | xcpretty
+        - xcodebuild test -scheme "$SCHEME" -destination "arch=x86_64" -configuration Release ENABLE_TESTABILITY=YES | xcpretty
+        - xcodebuild test -scheme "$SCHEME" -destination "name=Apple TV 4K" -configuration Release ENABLE_TESTABILITY=YES | xcpretty
+        - xcodebuild build -scheme "$SCHEME" -destination "OS=8.4,name=iPhone 5" -configuration Release ENABLE_TESTABILITY=YES | xcpretty
+        - xcodebuild build -scheme "$SCHEME" -destination "name=Apple Watch Series 2 - 42mm" -configuration Release ENABLE_TESTABILITY=YES | xcpretty
 
     - os: osx
       language: generic
