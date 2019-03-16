@@ -18,9 +18,7 @@ extension MessagePackType {
 }
 
 extension MessagePackType.StringType {
-    init(_ value: String) {
-        let utf8 = value.utf8
-        let count = utf8.count
+    init(_ count: Int) {
         if count < 0x1a {
             self = .fixstr
         } else if count < 0x100 {
@@ -113,18 +111,27 @@ extension MessagePackType.StringType {
     static func pack(for value: String) -> Data {
         let utf8 = value.utf8
         let count = utf8.count
-        let data = Data(utf8)
-        let type = MessagePackType.StringType(value)
-        let firstByte = type.firstByte.map { Data([$0]) } ?? Data([MessagePackType.StringType.fixFirstByteRange.lowerBound | UInt8(count)])
+        let type = MessagePackType.StringType(count)
         switch type {
         case .fixstr:
-            return firstByte + data
+            var data = Data([MessagePackType.StringType.fixFirstByteRange.lowerBound | UInt8(count)])
+            data.append(Data(utf8))
+            return data
         case .string8:
-            return firstByte + packInteger(for: UInt8(count).bigEndian) + data
+            var data = Data([type.firstByte!])
+            data.append(packInteger(for: UInt8(count).bigEndian))
+            data.append(Data(utf8))
+            return data
         case .string16:
-            return firstByte + packInteger(for: UInt16(count).bigEndian) + data
+            var data = Data([type.firstByte!])
+            data.append(packInteger(for: UInt16(count).bigEndian))
+            data.append(Data(utf8))
+            return data
         case .string32:
-            return firstByte + packInteger(for: UInt32(count).bigEndian) + data
+            var data = Data([type.firstByte!])
+            data.append(packInteger(for: UInt32(count).bigEndian))
+            data.append(Data(utf8))
+            return data
         }
     }
 

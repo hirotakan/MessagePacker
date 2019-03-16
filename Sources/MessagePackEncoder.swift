@@ -53,6 +53,34 @@ private extension MessagePackEncoder {
 
     func box<T : Encodable>(_ value: T) throws -> Data {
         switch T.self {
+        case let type where type == Bool.self:
+            return boxMessagePack(value as! Bool)
+        case let type where type == Int.self:
+            return boxInteger(value as! Int)
+        case let type where type == Int8.self:
+            return boxInteger(value as! Int8)
+        case let type where type == Int16.self:
+            return boxInteger(value as! Int16)
+        case let type where type == Int32.self:
+            return boxInteger(value as! Int32)
+        case let type where type == Int64.self:
+            return boxInteger(value as! Int64)
+        case let type where type == UInt.self:
+            return boxInteger(value as! UInt)
+        case let type where type == UInt8.self:
+            return boxInteger(value as! UInt8)
+        case let type where type == UInt16.self:
+            return boxInteger(value as! UInt16)
+        case let type where type == UInt32.self:
+            return boxInteger(value as! UInt32)
+        case let type where type == UInt64.self:
+            return boxInteger(value as! UInt64)
+        case let type where type == Float.self:
+            return boxMessagePack(value as! Float)
+        case let type where type == Double.self:
+            return boxMessagePack(value as! Double)
+        case let type where type == String.self:
+            return boxMessagePack(value as! String)
         case let type where type == Data.self || type == NSData.self:
             return boxMessagePack(value as! Data)
         case let type where type == Date.self || type == NSDate.self:
@@ -82,7 +110,8 @@ extension MessagePackEncoder {
 
         fileprivate func add(_ value: Data, forKey key: CodingKey) {
             let key = encoder.boxMessagePack(key.stringValue)
-            self.packedData += key + value
+            self.packedData.append(key)
+            self.packedData.append(value)
             count += 1
         }
 
@@ -207,7 +236,7 @@ extension MessagePackEncoder {
         }
 
         private func add(_ value: Data) {
-            packedData += value
+            packedData.append(value)
             count += 1
         }
 

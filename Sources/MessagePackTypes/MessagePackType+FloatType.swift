@@ -26,7 +26,9 @@ extension MessagePackType.FloatType {
     }
 
     static func pack(for value: Float) -> Data {
-        return Data([firstByte]) + packInteger(for: value.bitPattern.bigEndian)
+        var data = Data([firstByte])
+        data.append(packInteger(for: value.bitPattern.bigEndian))
+        return data
     }
 
     static func unpack(for value: Data) throws -> Float {

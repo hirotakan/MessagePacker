@@ -26,7 +26,9 @@ extension MessagePackType.DoubleType {
     }
 
     static func pack(for value: Double) -> Data {
-        return Data([firstByte]) + packInteger(for: value.bitPattern.bigEndian)
+        var data = Data([firstByte])
+        data.append(packInteger(for: value.bitPattern.bigEndian))
+        return data
     }
 
     static func unpack(for value: Data) throws -> Double {

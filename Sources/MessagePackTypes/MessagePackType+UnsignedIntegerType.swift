@@ -91,18 +91,25 @@ extension MessagePackType.UnsignedIntegerType {
 extension MessagePackType.UnsignedIntegerType {
     static func pack<T: BinaryInteger>(for value: T) -> Data {
         let type = MessagePackType.UnsignedIntegerType(value)
-        let firstByte = type.firstByte.map { Data([$0]) } ?? packInteger(for: UInt8(value).bigEndian)
         switch type {
         case .fixint:
-            return firstByte
+            return packInteger(for: UInt8(value).bigEndian)
         case .uint8:
-            return firstByte + packInteger(for: UInt8(value).bigEndian)
+            var data = Data([type.firstByte!])
+            data.append(packInteger(for: UInt8(value).bigEndian))
+            return data
         case .uint16:
-            return firstByte + packInteger(for: UInt16(value).bigEndian)
+            var data = Data([type.firstByte!])
+            data.append(packInteger(for: UInt16(value).bigEndian))
+            return data
         case .uint32:
-            return firstByte + packInteger(for: UInt32(value).bigEndian)
+            var data = Data([type.firstByte!])
+            data.append(packInteger(for: UInt32(value).bigEndian))
+            return data
         case .uint64:
-            return firstByte + packInteger(for: UInt64(value).bigEndian)
+            var data = Data([type.firstByte!])
+            data.append(packInteger(for: UInt64(value).bigEndian))
+            return data
         }
     }
 

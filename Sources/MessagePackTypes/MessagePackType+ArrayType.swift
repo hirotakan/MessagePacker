@@ -119,14 +119,21 @@ extension MessagePackType.ArrayType {
 
     static func pack(count: Int, value: Data) -> Data {
         let type = MessagePackType.ArrayType(count)
-        let firstByte = type.firstByte.map { Data([$0]) } ?? Data([MessagePackType.ArrayType.fixFirstByteRange.lowerBound | UInt8(count)])
         switch type {
         case .fixarray:
-            return firstByte + value
+            var data = Data([MessagePackType.ArrayType.fixFirstByteRange.lowerBound | UInt8(count)])
+            data.append(value)
+            return data
         case .array16:
-            return firstByte + packInteger(for: UInt16(count).bigEndian) + value
+            var data = Data([type.firstByte!])
+            data.append(packInteger(for: UInt16(count).bigEndian))
+            data.append(value)
+            return data
         case .array32:
-            return firstByte + packInteger(for: UInt32(count).bigEndian) + value
+            var data = Data([type.firstByte!])
+            data.append(packInteger(for: UInt32(count).bigEndian))
+            data.append(value)
+            return data
         }
     }
 }
