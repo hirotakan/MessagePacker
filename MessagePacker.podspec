@@ -14,9 +14,9 @@ Pod::Spec.new do |s|
   s.license      = { :type => "MIT", :file => "LICENSE" }
   s.author       = "hirotakan"
   s.ios.deployment_target = "8.0"
-  # s.osx.deployment_target = ""
-  # s.watchos.deployment_target = ""
-  # s.tvos.deployment_target = ""
+  s.osx.deployment_target = "10.10"
+  s.watchos.deployment_target = "2.0"
+  s.tvos.deployment_target = "9.0"
 
   s.swift_version  = "4.1"
   s.source       = { :git => "https://github.com/hirotakan/MessagePacker.git", :tag => "#{s.version}" }
