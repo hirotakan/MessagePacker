@@ -77,14 +77,14 @@ extension MessagePackType.MapType {
     private func length(_ value: Data) throws -> Int {
         switch self {
         case .fixmap:
-            let length: UInt8 = unpackInteger(try value.subdata(lengthRange))
+            let length: UInt8 = try unpackInteger(try value.subdata(lengthRange))
                 - MessagePackType.MapType.fixFirstByteRange.lowerBound
             return Int(length)
         case .map16:
-            let length: UInt16 = unpackInteger(try value.subdata(lengthRange))
+            let length: UInt16 = try unpackInteger(try value.subdata(lengthRange))
             return Int(length.bigEndian)
         case .map32:
-            let length: UInt32 = unpackInteger(try value.subdata(lengthRange))
+            let length: UInt32 = try unpackInteger(try value.subdata(lengthRange))
             return Int(length.bigEndian)
         }
     }

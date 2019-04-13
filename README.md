@@ -1,7 +1,7 @@
 # MessagePacker
 
 [![Build Status](https://travis-ci.org/hirotakan/MessagePacker.svg?branch=master)](https://travis-ci.org/hirotakan/MessagePacker)
-![Swift 4.1](https://img.shields.io/badge/Swift-4.1-orange.svg)
+![Swift 5.0](https://img.shields.io/badge/Swift-5.0-orange.svg)
 [![License](https://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Cocoapods](https://img.shields.io/cocoapods/v/MessagePacker.svg)](http://cocoadocs.org/docsets/MessagePacker)
@@ -97,7 +97,7 @@ let package = Package(
 ```
 
 ## Requirements
- - Swift 4.1 or later
+ - Swift 5.0 or later
  - iOS 8.0 or later
  - macOS 10.10 or later
  - tvOS 9.0 or later

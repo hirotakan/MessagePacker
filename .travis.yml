@@ -7,20 +7,7 @@ matrix:
   include:
     - os: osx
       language: objective-c
-      osx_image: xcode9.4
-      script:
-        - set -o pipefail
-        - xcodebuild -version
-        - xcodebuild -showsdks
-        - xcodebuild test -scheme "$SCHEME" -destination "name=iPhone X" -configuration Release ENABLE_TESTABILITY=YES | xcpretty
-        - xcodebuild test -scheme "$SCHEME" -destination "arch=x86_64" -configuration Release ENABLE_TESTABILITY=YES | xcpretty
-        - xcodebuild test -scheme "$SCHEME" -destination "name=Apple TV 4K" -configuration Release ENABLE_TESTABILITY=YES | xcpretty
-        - xcodebuild build -scheme "$SCHEME" -destination "OS=8.4,name=iPhone 5" -configuration Release ENABLE_TESTABILITY=YES | xcpretty
-        - xcodebuild build -scheme "$SCHEME" -destination "name=Apple Watch Series 2 - 42mm" -configuration Release ENABLE_TESTABILITY=YES | xcpretty
-
-    - os: osx
-      language: objective-c
-      osx_image: xcode10.1
+      osx_image: xcode10.2
       script:
         - set -o pipefail
         - xcodebuild -version
@@ -33,17 +20,7 @@ matrix:
 
     - os: osx
       language: generic
-      osx_image: xcode9.4
-      install:
-        - eval "$(curl -sL https://swiftenv.fuller.li/install.sh)"
-      script:
-        - swift --version
-        - swift build
-        - swift test
-
-    - os: osx
-      language: generic
-      osx_image: xcode10.1
+      osx_image: xcode10.2
       install:
         - eval "$(curl -sL https://swiftenv.fuller.li/install.sh)"
       script:
@@ -56,20 +33,7 @@ matrix:
       sudo: required
       dist: trusty
       env:
-        - SWIFT_VERSION=4.1
-      install:
-        - eval "$(curl -sL https://swiftenv.fuller.li/install.sh)"
-      script:
-        - swift --version
-        - swift build
-        - swift test
-
-    - os: linux
-      language: generic
-      sudo: required
-      dist: trusty
-      env:
-        - SWIFT_VERSION=4.2
+        - SWIFT_VERSION=5.0
       install:
         - eval "$(curl -sL https://swiftenv.fuller.li/install.sh)"
       script:

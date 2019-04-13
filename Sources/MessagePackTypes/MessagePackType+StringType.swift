@@ -82,17 +82,17 @@ extension MessagePackType.StringType {
     func length(_ value: Data) throws -> Int {
         switch self {
         case .fixstr:
-            let length: UInt8 = unpackInteger(try value.subdata(lengthRange))
+            let length: UInt8 = try unpackInteger(try value.subdata(lengthRange))
                 - MessagePackType.StringType.fixFirstByteRange.lowerBound
             return Int(length)
         case .string8:
-            let length: UInt8 = unpackInteger(try value.subdata(lengthRange))
+            let length: UInt8 = try unpackInteger(try value.subdata(lengthRange))
             return Int(length)
         case .string16:
-            let length: UInt16 = unpackInteger(try value.subdata(lengthRange))
+            let length: UInt16 = try unpackInteger(try value.subdata(lengthRange))
             return Int(length.bigEndian)
         case .string32:
-            let length: UInt32 = unpackInteger(try value.subdata(lengthRange))
+            let length: UInt32 = try unpackInteger(try value.subdata(lengthRange))
             return Int(length.bigEndian)
         }
     }

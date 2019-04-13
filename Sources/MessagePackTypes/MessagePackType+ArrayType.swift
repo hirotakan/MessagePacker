@@ -77,14 +77,14 @@ extension MessagePackType.ArrayType {
     private func length(for value: Data) throws -> Int {
         switch self {
         case .fixarray:
-            let length: UInt8 = unpackInteger(try value.subdata(lengthRange))
+            let length: UInt8 = try unpackInteger(try value.subdata(lengthRange))
                 - MessagePackType.ArrayType.fixFirstByteRange.lowerBound
             return Int(length)
         case .array16:
-            let length: UInt16 = unpackInteger(try value.subdata(lengthRange))
+            let length: UInt16 = try unpackInteger(try value.subdata(lengthRange))
             return Int(length.bigEndian)
         case .array32:
-            let length: UInt32 = unpackInteger(try value.subdata(lengthRange))
+            let length: UInt32 = try unpackInteger(try value.subdata(lengthRange))
             return Int(length.bigEndian)
         }
     }

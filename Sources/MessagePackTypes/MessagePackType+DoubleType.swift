@@ -32,7 +32,7 @@ extension MessagePackType.DoubleType {
     }
 
     static func unpack(for value: Data) throws -> Double {
-        let unpacked: UInt64 = unpackInteger(try value.subdata(dataRange))
+        let unpacked: UInt64 = try unpackInteger(try value.subdata(dataRange))
         return Double(bitPattern: UInt64(bigEndian: unpacked))
     }
 }
