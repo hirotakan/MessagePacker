@@ -137,13 +137,13 @@ extension MessagePackType.ExtensionType {
              .fixext16:
             return value.count - (dataTypeIndex + 1)
         case .ext8:
-            let length: UInt8 = unpackInteger(try value.subdata(lengthRange!))
+            let length: UInt8 = try unpackInteger(try value.subdata(lengthRange!))
             return Int(length)
         case .ext16:
-            let length: UInt16 = unpackInteger(try value.subdata(lengthRange!))
+            let length: UInt16 = try unpackInteger(try value.subdata(lengthRange!))
             return Int(length.bigEndian)
         case .ext32:
-            let length: UInt32 = unpackInteger(try value.subdata(lengthRange!))
+            let length: UInt32 = try unpackInteger(try value.subdata(lengthRange!))
             return Int(length.bigEndian)
         }
     }

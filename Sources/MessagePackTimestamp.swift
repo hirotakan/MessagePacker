@@ -23,16 +23,16 @@ extension MessagePackTimestamp {
     public init(extension ext: MessagePackExtension) throws {
         switch ext.data.count {
         case 4:
-            let time = UInt32(bigEndian: unpackInteger(ext.data))
+            let time = UInt32(bigEndian: try unpackInteger(ext.data))
             self.seconds = Int64(time)
             self.nanoseconds = 0
         case 8:
-            let time = UInt64(bigEndian: unpackInteger(ext.data))
+            let time = UInt64(bigEndian: try unpackInteger(ext.data))
             self.seconds = Int64(time & 0x00000003ffffffff)
             self.nanoseconds = Int64(time >> 34)
         case 12:
-            let nanosec = UInt32(bigEndian: unpackInteger(try ext.data.subdata(0..<4)))
-            let sec = Int64(bigEndian: unpackInteger(try ext.data.subdata(4..<12)))
+            let nanosec = UInt32(bigEndian: try unpackInteger(try ext.data.subdata(0..<4)))
+            let sec = Int64(bigEndian: try unpackInteger(try ext.data.subdata(4..<12)))
             self.seconds = Int64(sec)
             self.nanoseconds = Int64(nanosec)
         default:

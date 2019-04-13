@@ -120,13 +120,13 @@ extension MessagePackType.SignedIntegerType {
         case .fixint:
             return T(Int8(bitPattern: firstByte))
         case .int8:
-            return T(Int8(bigEndian: unpackInteger(try value.subdata(type.dataRange))))
+            return T(Int8(bigEndian: try unpackInteger(try value.subdata(type.dataRange))))
         case .int16:
-            return T(Int16(bigEndian: unpackInteger(try value.subdata(type.dataRange))))
+            return T(Int16(bigEndian: try unpackInteger(try value.subdata(type.dataRange))))
         case .int32:
-            return T(Int32(bigEndian: unpackInteger(try value.subdata(type.dataRange))))
+            return T(Int32(bigEndian: try unpackInteger(try value.subdata(type.dataRange))))
         case .int64:
-            return T(Int64(bigEndian: unpackInteger(try value.subdata(type.dataRange))))
+            return T(Int64(bigEndian: try unpackInteger(try value.subdata(type.dataRange))))
         }
     }
 }

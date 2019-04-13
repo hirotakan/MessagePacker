@@ -32,7 +32,7 @@ extension MessagePackType.FloatType {
     }
 
     static func unpack(for value: Data) throws -> Float {
-        let unpacked: UInt32 = unpackInteger(try value.subdata(dataRange))
+        let unpacked: UInt32 = try unpackInteger(try value.subdata(dataRange))
         return Float(bitPattern: UInt32(bigEndian: unpacked))
     }
 }

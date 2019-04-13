@@ -121,13 +121,13 @@ extension MessagePackType.UnsignedIntegerType {
         case .fixint:
             return T(firstByte)
         case .uint8:
-            return T(UInt8(bigEndian: unpackInteger(try value.subdata(type.dataRange))))
+            return T(UInt8(bigEndian: try unpackInteger(try value.subdata(type.dataRange))))
         case .uint16:
-            return T(UInt16(bigEndian: unpackInteger(try value.subdata(type.dataRange))))
+            return T(UInt16(bigEndian: try unpackInteger(try value.subdata(type.dataRange))))
         case .uint32:
-            return T(UInt32(bigEndian: unpackInteger(try value.subdata(type.dataRange))))
+            return T(UInt32(bigEndian: try unpackInteger(try value.subdata(type.dataRange))))
         case .uint64:
-            return T(UInt64(bigEndian: unpackInteger(try value.subdata(type.dataRange))))
+            return T(UInt64(bigEndian: try unpackInteger(try value.subdata(type.dataRange))))
         }
     }
 }
