@@ -76,9 +76,3 @@ matrix:
         - swift --version
         - swift build
         - swift test
-
-deploy:
-  provider: script
-  script: ./scripts/push.sh
-  on:
-    tags: true
