@@ -128,12 +128,12 @@ extension MessagePackType.MapType {
             return data
         case .map16:
             var data = Data([type.firstByte!])
-            data.append(packInteger(for: UInt16(count).bigEndian) + value)
+            data.append(packInteger(for: UInt16(count).bigEndian))
             data.append(value)
             return data
         case .map32:
             var data = Data([type.firstByte!])
-            data.append(packInteger(for: UInt32(count).bigEndian) + value)
+            data.append(packInteger(for: UInt32(count).bigEndian))
             data.append(value)
             return data
         }
