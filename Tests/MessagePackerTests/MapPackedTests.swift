@@ -32,6 +32,19 @@ class MapPackedTests: XCTestCase {
         XCTAssertEqual(try encoder.encode(input), output)
     }
 
+    func testMap16() {
+        let input = (0..<0xf).reduce(into: [String: Int]()) { $0[String($1)] = $1 }
+        let output = 53
+        XCTAssertEqual((try encoder.encode(input)).count, output)
+    }
+
+    func testMap32() {
+        let input = (0..<0x10000).reduce(into: [String: Int]()) { $0[String($1)] = $1 }
+        let output = 578335
+        XCTAssertEqual((try encoder.encode(input)).count, output)
+    }
+
+
     func test2DimensionalMap() {
         let input = ["a": ["b": 2]]
         let output = Data([129, 161, 97, 129, 161, 98, 2])
