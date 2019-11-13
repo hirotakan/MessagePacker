@@ -106,4 +106,4 @@ let package = Package(
 
 ## License
 
-ImageTransition is released under the MIT license. See [LICENSE](https://github.com/hirotakan/MessagePacker/blob/master/LICENSE) for details.
+MessagePacker is released under the MIT license. See [LICENSE](https://github.com/hirotakan/MessagePacker/blob/master/LICENSE) for details.
