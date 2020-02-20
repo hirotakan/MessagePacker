@@ -9,11 +9,14 @@
 import Foundation
 
 open class MessagePackEncoder: Encoder {
+    public var allowIntKeys: Bool
     public var codingPath: [CodingKey] = []
     public var userInfo: [CodingUserInfoKey : Any] = [:]
     fileprivate var storage = MessagePackStorage()
 
-    public init() {}
+    public init(allowIntKeys: Bool = false) {
+        self.allowIntKeys = allowIntKeys
+    }
 
     public func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key : CodingKey {
         return KeyedEncodingContainer(KeyedContainer<Key>(referencing: self, codingPath: codingPath) { [weak self] in
@@ -109,8 +112,13 @@ extension MessagePackEncoder {
         }
 
         fileprivate func add(_ value: Data, forKey key: CodingKey) {
-            let key = encoder.boxMessagePack(key.stringValue)
-            self.packedData.append(key)
+            let keyData: Data
+            if encoder.allowIntKeys, let intValue = key.intValue {
+                keyData = encoder.boxMessagePack(intValue)
+            } else {
+                keyData = encoder.boxMessagePack(key.stringValue)
+            }
+            self.packedData.append(keyData)
             self.packedData.append(value)
             count += 1
         }
@@ -420,11 +428,11 @@ extension MessagePackEncoder {
         }
     }
 
-    class MessagePackReferencingKeyedEncoder<Key: CodingKey>: MessagePackEncoder {
+    class MessagePackReferencingKeyedEncoder<Key: CodingKey, Key2: CodingKey>: MessagePackEncoder {
         private let container: KeyedContainer<Key>
-        private let key: CodingKey
+        private let key: Key2
 
-        init(container: KeyedContainer<Key>, key: CodingKey) {
+        init(container: KeyedContainer<Key>, key: Key2) {
             self.container = container
             self.key = key
             super.init()
@@ -450,3 +458,6 @@ extension MessagePackEncoder {
         }
     }
 }
+
+
+

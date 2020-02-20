@@ -102,7 +102,12 @@ extension MessagePackType.MapType {
 }
 
 extension MessagePackType.MapType {
-    static func split(for value: Data) throws -> [String : Data] {
+    enum Key: Hashable {
+        case string(String)
+        case int(Int)
+    }
+
+    static func split(for value: Data) throws -> [Key : Data] {
         guard let firstByte = value.first else { throw MessagePackError.emptyData }
 
         let type = try MessagePackType.MapType(firstByte)
@@ -110,10 +115,16 @@ extension MessagePackType.MapType {
         let length = try type.length(value)
 
         return try (0..<length)
-            .reduce(into: (dictionary: [String : Data](), index: startIndex)) { args, _ in
+            .reduce(into: (dictionary: [Key : Data](), index: startIndex)) { args, _ in
                 let key = try value.subdata(startIndex: args.index).firstMessagePackeValue()
                 let value = try value.subdata(startIndex: args.index + key.count).firstMessagePackeValue()
-                args.dictionary[try String.unpack(for: key)] = value
+                let keyType = try MessagePackType(key.first!)
+                switch keyType {
+                case .signedInteger, .unsignedInteger:
+                    args.dictionary[.int(try Int.unpack(for: key))] = value
+                default:
+                    args.dictionary[.string(try String.unpack(for: key))] = value
+                }
                 args.index += (key.count + value.count)
             }
             .dictionary
@@ -139,3 +150,4 @@ extension MessagePackType.MapType {
         }
     }
 }
+

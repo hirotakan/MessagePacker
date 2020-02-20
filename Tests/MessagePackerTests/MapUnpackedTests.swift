@@ -39,6 +39,32 @@ class MapUnpackedTests: XCTestCase {
         }
     }
 
+    func testAllowIntKey() {
+        let input = Data([130, 2, 203, 64, 1, 153, 153, 153, 153, 153, 154, 1, 203, 63, 241, 153, 153, 153, 153, 153, 154])
+        let output: [Int: Double] = [1: 1.1, 2: 2.2]
+
+        do {
+            let decoder = MessagePackDecoder(allowIntKeys: true)
+            let result: [Int: Double] = try decoder.decode(Dictionary.self, from: input)
+            result.forEach { XCTAssertEqual(output[$0.key], $0.value) }
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+
+    func testAllowIntKeyWithString() {
+        let input = Data([130, 161, 65, 9, 1, 9])
+        let output: [String: Int] = ["1": 9, "A": 9]
+
+        do {
+            let decoder = MessagePackDecoder(allowIntKeys: true)
+            let result: [String: Int] = try decoder.decode(Dictionary.self, from: input)
+            result.forEach { XCTAssertEqual(output[$0.key], $0.value) }
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+
     func test2DimensionalMap() {
         let input = Data([129, 161, 97, 129, 161, 98, 2])
         let output = ["a": ["b": 2]]
@@ -46,3 +72,4 @@ class MapUnpackedTests: XCTestCase {
         XCTAssertEqual(try decoder.decode(Dictionary.self, from: input), output)
     }
 }
+

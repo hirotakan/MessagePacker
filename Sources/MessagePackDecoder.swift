@@ -9,15 +9,19 @@
 import Foundation
 
 open class MessagePackDecoder: Decoder {
+    public var allowIntKeys: Bool
     public var codingPath: [CodingKey] = []
     public var userInfo: [CodingUserInfoKey : Any] = [:]
     private var storage = MessagePackStorage()
 
-    public init() {}
+    public init(allowIntKeys: Bool = false) {
+        self.allowIntKeys = allowIntKeys
+    }
 
-    public init(referencing: Data, codingPath: [CodingKey] = []) {
+    public init(referencing: Data, codingPath: [CodingKey] = [], allowIntKeys: Bool = false) {
         storage.push(container: referencing)
         self.codingPath = codingPath
+        self.allowIntKeys = allowIntKeys
     }
 
     public func container<Key: CodingKey>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> {
@@ -123,25 +127,45 @@ private extension MessagePackDecoder {
 }
 
 extension MessagePackDecoder {
+    private func convert<Key: CodingKey>(packKey: MessagePackType.MapType.Key, to: Key.Type) -> Key? {
+        switch packKey {
+        case .int(let intValue):
+            if allowIntKeys {
+                return Key(intValue: intValue)
+            } else {
+                return Key(stringValue: String(intValue))
+            }
+        case .string(let stringValue):
+            return Key(stringValue: stringValue)
+        }
+    }
+    private func convertToPackKey(from codingKey: CodingKey) -> MessagePackType.MapType.Key {
+        if allowIntKeys, let intValue = codingKey.intValue {
+            return .int(intValue)
+        } else {
+            return .string(codingKey.stringValue)
+        }
+    }
+
     struct KeyedContainer<Key: CodingKey>: KeyedDecodingContainerProtocol {
         private let decoder: MessagePackDecoder
         private(set) var codingPath: [CodingKey]
         private(set) var allKeys: [Key]
-        private var container: [String: Data] = [:]
+        private var container: [MessagePackType.MapType.Key: Data] = [:]
 
-        init(referencing decoder: MessagePackDecoder, container: [String: Data]) {
+        init(referencing decoder: MessagePackDecoder, container: [MessagePackType.MapType.Key: Data]) {
             self.decoder = decoder
             self.codingPath = decoder.codingPath
-            self.allKeys = container.keys.compactMap { Key(stringValue: $0) }
+            self.allKeys = container.keys.compactMap { decoder.convert(packKey: $0, to: Key.self) }
             self.container = container
         }
 
         func contains(_ key: Key) -> Bool {
-            return container[key.stringValue] != nil
+            return container[decoder.convertToPackKey(from: key)] != nil
         }
 
         func findEntry(by key: CodingKey) throws -> Data {
-            guard let entry = self.container[key.stringValue] else {
+            guard let entry = self.container[decoder.convertToPackKey(from: key)] else {
                 let context = DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(key) (\"\(key.stringValue)\").")
                 throw DecodingError.keyNotFound(key, context)
             }
@@ -542,3 +566,7 @@ extension MessagePackDecoder {
         }
     }
 }
+
+
+
+
