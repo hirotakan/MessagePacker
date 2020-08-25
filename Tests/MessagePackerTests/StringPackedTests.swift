@@ -21,14 +21,14 @@ class StringPackedTests: XCTestCase {
     }
 
     func testFixString() {
-        let input = "Hello, world!"
-        let output = Data([173]) + input.data(using: .utf8)!
+        let input = "Hello, world!!!!!!!!!!!!!!!!!!!"
+        let output = Data([191, 72, 101, 108, 108, 111, 44, 32, 119, 111, 114, 108, 100, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33])
         XCTAssertEqual(try encoder.encode(input), output)
     }
 
     func testFixString8() {
-        let input = String(repeating: "Hello, world!", count: 2)
-        let output = Data([217, 26]) + input.data(using: .utf8)!
+        let input = "Hello, world!!!!!!!!!!!!!!!!!!!!"
+        let output = Data([217, 32, 72, 101, 108, 108, 111, 44, 32, 119, 111, 114, 108, 100, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33, 33])
         XCTAssertEqual(try encoder.encode(input), output)
     }
 
