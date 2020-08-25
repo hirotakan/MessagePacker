@@ -9,8 +9,9 @@
 import Foundation
 
 func packInteger<T: BinaryInteger>(for int: T) -> Data {
-    var data = int
-    return Data(buffer: UnsafeBufferPointer(start: &data, count: 1))
+    return withUnsafePointer(to: int) {
+        Data(buffer: UnsafeBufferPointer(start: $0, count: 1))
+    }
 }
 
 func unpackInteger<T: BinaryInteger>(_ value: Data) throws -> T {

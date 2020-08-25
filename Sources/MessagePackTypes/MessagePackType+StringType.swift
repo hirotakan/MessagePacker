@@ -19,7 +19,7 @@ extension MessagePackType {
 
 extension MessagePackType.StringType {
     init(_ count: Int) {
-        if count < 0x1a {
+        if count < 0x20 {
             self = .fixstr
         } else if count < 0x100 {
             self = .string8
