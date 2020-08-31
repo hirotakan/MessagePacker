@@ -140,7 +140,9 @@ extension MessagePackType.StringType {
 
         let type = try MessagePackType.StringType(firstByte)
         let dataRange = try type.dataRange(value)
-        let value = try value.subdata(dataRange)
+
+        let isEmptyData = dataRange.endIndex == 1
+        let value = isEmptyData ? Data() : try value.subdata(dataRange)
 
         guard let data = String(data: value, encoding: .utf8) else {
             throw MessagePackError.invalidData

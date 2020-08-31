@@ -43,4 +43,10 @@ class StringUnpackedTests: XCTestCase {
         let input = Data([219, 0, 1, 0, 114] + output.data(using: .utf8)!)
         XCTAssertEqual(try decoder.decode(String.self, from: input), output)
     }
+
+    func testEmptyString() {
+        let input = Data([160])
+        let output = ""
+        XCTAssertEqual(try decoder.decode(String.self, from: input), output)
+    }
 }
