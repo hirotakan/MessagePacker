@@ -1,0 +1,57 @@
+name: "MessagePacker CI"
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  xcode:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        xcode: [10.3, 11.6]
+      fail-fast: false
+    name: Xcode ${{ matrix.xcode }}
+    env:
+      DEVELOPER_DIR: "/Applications/Xcode_${{ matrix.xcode }}.app"
+    steps:
+      - uses: actions/checkout@v2
+      - name: test
+        run: |
+          set -o pipefail
+          xcodebuild test -scheme "MessagePacker" -destination "name=iPhone 8" -configuration Release ENABLE_TESTABILITY=YES | xcpretty
+          xcodebuild test -scheme "MessagePacker" -destination "arch=x86_64" -configuration Release ENABLE_TESTABILITY=YES | xcpretty
+          xcodebuild test -scheme "MessagePacker" -destination "name=Apple TV 4K" -configuration Release ENABLE_TESTABILITY=YES | xcpretty
+          xcodebuild build -scheme "MessagePacker" -destination "name=Apple Watch Series 4 - 44mm" -configuration Release ENABLE_TESTABILITY=YES | xcpretty
+
+  swiftpm:
+    runs-on: macos-latest
+    name: SwiftPM
+    env:
+      DEVELOPER_DIR: "/Applications/Xcode_11.6.app"
+    steps:
+      - uses: actions/checkout@v2
+      - name: build and test
+        run: |
+          swift --version
+          swift build
+          swift test
+
+  linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        swift-version: [5.0.0] #, 5]
+      fail-fast: false
+    name: Linux（Swift version ${{ matrix.swift-version }}）
+    steps:
+      - uses: actions/checkout@v2
+      - uses: fwal/setup-swift@v1
+        with:
+            swift-version: '${{ matrix.swift-version }}'
+      - name: build and test
+        run: |
+          swift --version
+          swift build
+          swift test
