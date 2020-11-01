@@ -27,7 +27,7 @@ extension Data {
         let start = startIndex + range.lowerBound
         let end = startIndex + range.upperBound
 
-        guard start < endIndex && end <= endIndex else { throw MessagePackError.outOfRange }
+        guard start <= endIndex && end <= endIndex else { throw MessagePackError.outOfRange }
 
         return self[start..<end]
     }

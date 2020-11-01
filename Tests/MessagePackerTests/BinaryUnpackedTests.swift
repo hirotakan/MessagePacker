@@ -25,4 +25,10 @@ class BinaryUnpackedTests: XCTestCase {
         let output = Data([0, 1, 2, 3, 4])
         XCTAssertEqual(try decoder.decode(Data.self, from: input), output)
     }
+
+    func testEmpty() {
+        let input = Data([196, 0])
+        let output = Data()
+        XCTAssertEqual(try decoder.decode(Data.self, from: input), output)
+    }
 }
