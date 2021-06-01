@@ -39,7 +39,7 @@ jobs:
           swift test
 
   linux:
-    runs-on: ubuntu-latest
+    runs-on: Ubuntu-18.04
     strategy:
       matrix:
         swift-version: [5.0.0] #, 5]
