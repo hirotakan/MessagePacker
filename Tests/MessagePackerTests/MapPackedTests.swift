@@ -44,6 +44,26 @@ class MapPackedTests: XCTestCase {
         XCTAssertEqual((try encoder.encode(input)).count, output)
     }
 
+    func testMapAllowIntKey() {
+        let input = [8: 1.1]
+        let output = Data([129, 8, 203, 63, 241, 153, 153, 153, 153, 153, 154])
+        let encoder = MessagePackEncoder(allowIntKeys: true)
+        XCTAssertEqual(try encoder.encode(input), output)
+    }
+
+    func testMapAllowIntKeyWithString() {
+        let input = ["A": 9]
+        let output = Data([129, 161, 65, 9])
+        let encoder = MessagePackEncoder(allowIntKeys: true)
+        XCTAssertEqual(try encoder.encode(input), output)
+    }
+
+    func testMapAllowIntKeyWithIntegerInString() {
+        let input = ["1": 9]
+        let output = Data([129, 1, 9])
+        let encoder = MessagePackEncoder(allowIntKeys: true)
+        XCTAssertEqual(try encoder.encode(input), output)
+    }
 
     func test2DimensionalMap() {
         let input = ["a": ["b": 2]]
@@ -51,3 +71,5 @@ class MapPackedTests: XCTestCase {
         XCTAssertEqual(try encoder.encode(input), output)
     }
 }
+
+
