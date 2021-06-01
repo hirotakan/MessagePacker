@@ -155,7 +155,7 @@ extension MessagePackType.ExtensionType {
     private func dataType(_ value: Data) throws -> Int8 {
         guard value.count >= dataTypeIndex else { throw MessagePackError.outOfRange }
 
-        return Int8(bitPattern: value[dataTypeIndex])
+        return Int8(bitPattern: value[value.startIndex + dataTypeIndex])
     }
 
     private func dataRange(_ value: Data) throws -> Range<Int> {
