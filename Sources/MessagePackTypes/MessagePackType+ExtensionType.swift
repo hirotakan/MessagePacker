@@ -130,12 +130,16 @@ extension MessagePackType.ExtensionType {
 
     private func length(_ value: Data) throws -> Int {
         switch self {
-        case .fixext1,
-             .fixext2,
-             .fixext4,
-             .fixext8,
-             .fixext16:
-            return value.count - (dataTypeIndex + 1)
+        case .fixext1:
+            return 1
+        case .fixext2:
+            return 2
+        case .fixext4:
+            return 4
+        case .fixext8:
+            return 8
+        case .fixext16:
+            return 16
         case .ext8:
             let length: UInt8 = try unpackInteger(try value.subdata(lengthRange!))
             return Int(length)
