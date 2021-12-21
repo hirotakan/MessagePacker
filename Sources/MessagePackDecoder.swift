@@ -99,7 +99,7 @@ private extension MessagePackDecoder {
     func unboxInteger<T: BinaryInteger & MessagePackable>(_ value: Data, as type: T.Type) throws -> T where T.T == T {
         if let firstByte = value.first,
             let _ = try? MessagePackType.UnsignedIntegerType(firstByte) {
-            return T(try unboxMessagePack(value, as: UInt.self))
+            return T(try unboxMessagePack(value, as: UInt64.self))
         } else {
             return try unboxMessagePack(value, as: type)
         }
