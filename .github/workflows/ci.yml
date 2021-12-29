@@ -7,7 +7,7 @@ on:
 
 jobs:
   xcode:
-    runs-on: macos-latest
+    runs-on: macos-10.15
     strategy:
       matrix:
         xcode: [10.3, 11.6]
@@ -26,7 +26,7 @@ jobs:
           xcodebuild build -scheme "MessagePacker" -destination "name=Apple Watch Series 4 - 44mm" -configuration Release ENABLE_TESTABILITY=YES | xcpretty
 
   swiftpm:
-    runs-on: macos-latest
+    runs-on: macos-10.15
     name: SwiftPM
     env:
       DEVELOPER_DIR: "/Applications/Xcode_11.6.app"
