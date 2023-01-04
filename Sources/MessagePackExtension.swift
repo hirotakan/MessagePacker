@@ -11,6 +11,11 @@ import Foundation
 public struct MessagePackExtension: Equatable {
     public var type: Int8
     public var data: Data
+    
+    public init(type: Int8, data: Data) {
+        self.type = type
+        self.data = data
+    }
 }
 
 extension MessagePackExtension {
