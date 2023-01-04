@@ -11,6 +11,11 @@ import Foundation
 public struct MessagePackTimestamp: Equatable {
     public var seconds: Int64
     public var nanoseconds: Int64
+    
+    public init(seconds: Int64, nanoseconds: Int64) {
+        self.seconds = seconds
+        self.nanoseconds = nanoseconds
+    }
 }
 
 extension MessagePackTimestamp {
