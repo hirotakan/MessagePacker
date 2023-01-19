@@ -52,3 +52,8 @@ extension MessagePackExtension: MessagePackable {
         return try MessagePackType.ExtensionType.unpack(for: value)
     }
 }
+
+#if swift(>=5.7)
+extension MessagePackExtension: Sendable {
+}
+#endif

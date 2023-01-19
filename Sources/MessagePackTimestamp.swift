@@ -67,3 +67,8 @@ extension MessagePackTimestamp: MessagePackable {
         return try MessagePackTimestamp(extension: ext)
     }
 }
+
+#if swift(>=5.7)
+extension MessagePackTimestamp: Sendable {
+}
+#endif
