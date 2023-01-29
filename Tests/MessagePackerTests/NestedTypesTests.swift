@@ -13,9 +13,7 @@ class NestedTypesTests: XCTestCase {
     let encoder = MessagePackEncoder()
     let decoder = MessagePackDecoder()
 
-    func testNestedTypeEncodingAsFlattened_encode() throws {
-        throw XCTSkip()
-
+    func testNestedTypeEncodingAsFlattened_encode() {
         let input = NestedTypeEncodingAsFlattened(
             outerTypeProperty: "outerTypeValue",
             innerType: .init(innerTypeProperty: "innerTypeValue")
@@ -33,9 +31,7 @@ class NestedTypesTests: XCTestCase {
         XCTAssertEqual(try decoder.decode(NestedTypeEncodingAsFlattened.self, from: input), output)
     }
 
-    func testNestedTypeEncodingAsFlattenedUnkeyed_encode() throws {
-        throw XCTSkip()
-
+    func testNestedTypeEncodingAsFlattenedUnkeyed_encode() {
         let input = NestedTypeEncodingAsFlattenedUnkeyed(
             outerTypeProperty: "outerTypeValue",
             innerType: .init(innerTypeProperty: "innerTypeValue")

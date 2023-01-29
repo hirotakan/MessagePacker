@@ -11,21 +11,17 @@ import Foundation
 open class MessagePackEncoder: Encoder {
     public var codingPath: [CodingKey] = []
     public var userInfo: [CodingUserInfoKey : Any] = [:]
-    fileprivate var storage = MessagePackStorage()
+    fileprivate var storage = Storage()
 
     public init() {}
 
     public func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key : CodingKey {
-        return KeyedEncodingContainer(KeyedContainer<Key>(referencing: self, codingPath: codingPath) { [weak self] in
-            guard let `self` = self else { return }
-            self.storage.push(container: $0)
+        return KeyedEncodingContainer(KeyedContainer<Key>(referencing: self, codingPath: codingPath) {
         })
     }
 
     public func unkeyedContainer() -> UnkeyedEncodingContainer {
-        return UnkeyedContainer(referencing: self, codingPath: codingPath) { [weak self] in
-            guard let `self` = self else { return }
-            self.storage.push(container: $0)
+        return UnkeyedContainer(referencing: self, codingPath: codingPath) {
         }
     }
 
@@ -89,7 +85,7 @@ private extension MessagePackEncoder {
             return boxMessagePack((value as! URL).absoluteString)
         default:
             try value.encode(to: self)
-            return storage.popContainer()
+            return storage.popContainer().pack()
         }
     }
 }
@@ -98,21 +94,27 @@ extension MessagePackEncoder {
     class KeyedContainer<Key: CodingKey>: KeyedEncodingContainerProtocol {
         private let encoder: MessagePackEncoder
         private(set) var codingPath: [CodingKey]
-        private var count = 0
-        private var packedData = Data()
-        private let completion: (Data) -> ()
+        private let containerStorage: ContainerStorage
+        private let completion: () -> Void
 
-        init(referencing encoder: MessagePackEncoder, codingPath: [CodingKey], completion: @escaping (Data) -> ()) {
+        init(referencing encoder: MessagePackEncoder, codingPath: [CodingKey], completion: @escaping () -> Void) {
             self.encoder = encoder
             self.codingPath = codingPath
             self.completion = completion
+
+            if let containerStorage = encoder.storage.last, containerStorage.codingPath.count == codingPath.count {
+                precondition(containerStorage.type == .map)
+                self.containerStorage = containerStorage
+            } else {
+                self.containerStorage = ContainerStorage(type: .map, codingPath: codingPath)
+                encoder.storage.push(containerStorage)
+            }
         }
 
         fileprivate func add(_ value: Data, forKey key: CodingKey) {
-            let key = encoder.boxMessagePack(key.stringValue)
-            self.packedData.append(key)
-            self.packedData.append(value)
-            count += 1
+            var packedData = encoder.boxMessagePack(key.stringValue)
+            packedData.append(value)
+            containerStorage.append(packedData)
         }
 
         func encodeNil(forKey key: Key) throws {
@@ -188,18 +190,26 @@ extension MessagePackEncoder {
         func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: Key) -> KeyedEncodingContainer<NestedKey> {
             codingPath.append(key)
             defer { codingPath.removeLast() }
+
+            encoder.storage.push(ContainerStorage(type: .map, codingPath: codingPath))
+
             return KeyedEncodingContainer(KeyedContainer<NestedKey>(referencing: encoder, codingPath: codingPath) { [weak self] in
                 guard let `self` = self else { return }
-                self.add($0, forKey: key)
+                let encodedContainer = self.encoder.storage.popContainer().pack()
+                self.add(encodedContainer, forKey: key)
             })
         }
 
         func nestedUnkeyedContainer(forKey key: Key) -> UnkeyedEncodingContainer {
             codingPath.append(key)
             defer { codingPath.removeLast() }
+
+            encoder.storage.push(ContainerStorage(type: .array, codingPath: codingPath))
+
             return UnkeyedContainer(referencing: encoder, codingPath: codingPath) { [weak self] in
                 guard let `self` = self else { return }
-                self.add($0, forKey: key)
+                let encodedContainer = self.encoder.storage.popContainer().pack()
+                self.add(encodedContainer, forKey: key)
             }
         }
 
@@ -212,32 +222,40 @@ extension MessagePackEncoder {
         }
 
         deinit {
-            let value = MessagePackType.MapType.pack(count: count, value: packedData)
-            completion(value)
+            completion()
         }
     }
 
     final class UnkeyedContainer: UnkeyedEncodingContainer {
         private let encoder: MessagePackEncoder
         private(set) var codingPath: [CodingKey]
-        private(set) var count = 0
-        private var packedData = Data()
-        private let completion: (Data) -> ()
+        private let containerStorage: ContainerStorage
+        private let completion: () -> Void
 
-        init(referencing encoder: MessagePackEncoder, codingPath: [CodingKey], completion: @escaping (Data) -> ()) {
+        var count: Int {
+            return containerStorage.count
+        }
+
+        init(referencing encoder: MessagePackEncoder, codingPath: [CodingKey], completion: @escaping () -> Void) {
             self.encoder = encoder
             self.codingPath = codingPath
             self.completion = completion
+
+            if let containerStorage = encoder.storage.last, containerStorage.codingPath.count == codingPath.count {
+                precondition(containerStorage.type == .array)
+                self.containerStorage = containerStorage
+            } else {
+                self.containerStorage = ContainerStorage(type: .array, codingPath: codingPath)
+                encoder.storage.push(containerStorage)
+            }
         }
 
         fileprivate func insert(_ value: Data, at index: Int) {
-            packedData.insert(contentsOf: value, at: index)
-            count += 1
+            containerStorage.insert(value, at: index)
         }
 
         private func add(_ value: Data) {
-            packedData.append(value)
-            count += 1
+            containerStorage.append(value)
         }
 
         func encodeNil() throws {
@@ -305,36 +323,47 @@ extension MessagePackEncoder {
         }
 
         func encode<T: Encodable>(_ value: T) throws {
-            encoder.codingPath.append(MessagePackKey(index: count))
+            encoder.codingPath.append(MessagePackKey(index: containerStorage.count))
             defer { encoder.codingPath.removeLast() }
             add(try encoder.box(value))
         }
 
         func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
-            codingPath.append(MessagePackKey(index: count))
+            codingPath.append(MessagePackKey(index: containerStorage.count))
             defer { codingPath.removeLast() }
+
+            encoder.storage.push(ContainerStorage(type: .map, codingPath: codingPath))
+
+            let insertionIndex = containerStorage.endIndex
+
             return KeyedEncodingContainer(KeyedContainer<NestedKey>(referencing: encoder, codingPath: codingPath) { [weak self] in
                 guard let `self` = self else { return }
-                self.insert($0, at: self.packedData.endIndex)
+                let encodedContainer = self.encoder.storage.popContainer().pack()
+                self.insert(encodedContainer, at: insertionIndex)
             })
         }
 
         func nestedUnkeyedContainer() -> UnkeyedEncodingContainer {
-            codingPath.append(MessagePackKey(index: count))
+            codingPath.append(MessagePackKey(index: containerStorage.count))
             defer { codingPath.removeLast() }
+
+            encoder.storage.push(ContainerStorage(type: .array, codingPath: codingPath))
+
+            let insertionIndex = containerStorage.endIndex
+
             return UnkeyedContainer(referencing: encoder, codingPath: codingPath) { [weak self] in
                 guard let `self` = self else { return }
-                self.insert($0, at: self.packedData.endIndex)
+                let encodedContainer = self.encoder.storage.popContainer().pack()
+                self.insert(encodedContainer, at: insertionIndex)
             }
         }
 
         func superEncoder() -> Encoder {
-            return MessagePackReferencingUnkeyedEncoder(container: self, index: packedData.endIndex)
+            return MessagePackReferencingUnkeyedEncoder(container: self, index: containerStorage.endIndex)
         }
 
         deinit {
-            let value = MessagePackType.ArrayType.pack(count: count, value: packedData)
-            completion(value)
+            completion()
         }
     }
 
@@ -348,7 +377,7 @@ extension MessagePackEncoder {
         }
 
         private func push(_ value: Data) {
-            encoder.storage.push(container: value)
+            encoder.storage.push(ContainerStorage(singleValue: value, codingPath: codingPath))
         }
 
         func encodeNil() throws {
@@ -431,7 +460,7 @@ extension MessagePackEncoder {
         }
 
         deinit {
-            container.add(storage.popContainer(), forKey: key)
+            container.add(storage.popContainer().pack(), forKey: key)
         }
     }
 
@@ -446,7 +475,88 @@ extension MessagePackEncoder {
         }
 
         deinit {
-            container.insert(storage.popContainer(), at: index)
+            container.insert(storage.popContainer().pack(), at: index)
+        }
+    }
+}
+
+private extension MessagePackEncoder {
+    class ContainerStorage {
+        enum ContainerType {
+            case map
+            case array
+            case singleValue
+        }
+        let type: ContainerType
+
+        let codingPath: [CodingKey]
+
+        private(set) var count = 0
+
+        private var packedData = Data()
+        var endIndex: Data.Index {
+            packedData.endIndex
+        }
+
+        init(type: ContainerType, codingPath: [CodingKey]) {
+            precondition(type != .singleValue)
+
+            self.type = type
+            self.codingPath = codingPath
+        }
+
+        init(singleValue: Data, codingPath: [CodingKey]) {
+            self.type = .singleValue
+            self.codingPath = codingPath
+
+            append(singleValue)
+        }
+
+        func append(_ value: Data) {
+            count += 1
+            packedData.append(value)
+        }
+
+        func insert(_ value: Data, at index: Data.Index) {
+            count += 1
+            packedData.insert(contentsOf: value, at: index)
+        }
+
+        func pack() -> Data {
+            switch type {
+            case .map:
+                return MessagePackType.MapType.pack(count: count, value: packedData)
+
+            case .array:
+                return MessagePackType.ArrayType.pack(count: count, value: packedData)
+
+            case .singleValue:
+                precondition(count == 1)
+                return packedData
+            }
+        }
+    }
+}
+
+private extension MessagePackEncoder {
+    struct Storage {
+        private var containers = [ContainerStorage]()
+
+        var count: Int {
+            return containers.count
+        }
+
+        var last: ContainerStorage? {
+            return containers.last
+        }
+
+        mutating func push(_ container: ContainerStorage) {
+            containers.append(container)
+        }
+
+        mutating func popContainer() -> ContainerStorage {
+            precondition(containers.count > 0, "Empty container stack.")
+            return containers.popLast()!
         }
     }
 }
