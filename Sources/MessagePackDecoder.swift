@@ -11,20 +11,20 @@ import Foundation
 open class MessagePackDecoder: Decoder {
     public var codingPath: [CodingKey] = []
     public var userInfo: [CodingUserInfoKey : Any] = [:]
-    private var storage = MessagePackStorage()
+    private var storage = Storage()
 
     public init() {}
 
-    public init(referencing: Data, codingPath: [CodingKey] = []) {
-        storage.push(container: referencing)
+    fileprivate init(referencing encodedData: Data, codingPath: [CodingKey] = []) {
         self.codingPath = codingPath
+
+        storage.push(ContainerStorage(encodedData: encodedData))
     }
 
     public func container<Key: CodingKey>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> {
         do {
-            let container = try lastContainer(KeyedDecodingContainer<Key>.self)
-            let value = try MessagePackType.MapType.split(for: container)
-            return KeyedDecodingContainer(KeyedContainer<Key>(referencing: self, container: value))
+            let container = try lastMap()
+            return KeyedDecodingContainer(KeyedContainer<Key>(referencing: self, container: container))
         } catch let error as MessagePackError {
             throw error.asDecodingError([String: Any].self, codingPath: codingPath)
         } catch {
@@ -34,9 +34,8 @@ open class MessagePackDecoder: Decoder {
 
     public func unkeyedContainer() throws -> UnkeyedDecodingContainer {
         do {
-            let container = try lastContainer(UnkeyedDecodingContainer.self)
-            let value = try MessagePackType.ArrayType.split(for: container)
-            return UnkeyedContainer(referencing: self, container: value)
+            let arrayStorage = try lastArrayStorage()
+            return UnkeyedContainer(referencing: self, arrayStorage: arrayStorage)
         } catch let error as MessagePackError {
             throw error.asDecodingError([Any].self, codingPath: codingPath)
         } catch {
@@ -46,7 +45,7 @@ open class MessagePackDecoder: Decoder {
 
     public func singleValueContainer() throws -> SingleValueDecodingContainer {
         do {
-            let container = try lastContainer(SingleValueDecodingContainer.self)
+            let container = try lastSingleValue()
             return SingleValueContainer(referencing: self, container: container)
         } catch let error as MessagePackError {
             throw error.asDecodingError([Any].self, codingPath: codingPath)
@@ -59,12 +58,43 @@ open class MessagePackDecoder: Decoder {
         return try unbox(container, as: type)
     }
 
-    private func lastContainer<T>(_ type: T.Type) throws -> Data {
-        guard let value = storage.last else {
-            let context = DecodingError.Context(codingPath: codingPath, debugDescription: "Cannot get \(type) decoding container -- found null value instead.")
-            throw DecodingError.valueNotFound(type.self, context)
+    private func lastMap() throws -> [String: Data] {
+        let lastContainerStorage = storage.last!
+        switch lastContainerStorage {
+        case .map(let lastMap):
+            return lastMap
+
+        case .array,
+                .singleValue:
+            let context = DecodingError.Context(codingPath: codingPath, debugDescription: "Last container is not a map container: \(lastContainerStorage)")
+            throw DecodingError.typeMismatch([String: Any].self, context)
         }
-        return value
+    }
+
+    private func lastArrayStorage() throws -> ArrayStorage {
+        let lastContainerStorage = storage.last!
+        switch lastContainerStorage {
+        case .array(let lastArray):
+            return lastArray
+
+        case .map,
+                .singleValue:
+            let context = DecodingError.Context(codingPath: codingPath, debugDescription: "Last container is not an array container: \(lastContainerStorage)")
+            throw DecodingError.typeMismatch([Any].self, context)
+        }
+    }
+
+    private func lastSingleValue() throws -> Data {
+        let lastContainerStorage = storage.last!
+        switch lastContainerStorage {
+        case .singleValue(let lastSingleValue):
+            return lastSingleValue
+
+        case .map,
+                .array:
+            let context = DecodingError.Context(codingPath: codingPath, debugDescription: "Last container is not a single value: \(lastContainerStorage)")
+            throw DecodingError.typeMismatch(Any.self, context)
+        }
     }
 }
 
@@ -106,7 +136,7 @@ private extension MessagePackDecoder {
     }
 
     func unbox<T: Decodable>(_ value: Data, as type: T.Type) throws -> T {
-        storage.push(container: value)
+        storage.push(ContainerStorage(encodedData: value))
         defer { _ = storage.popContainer() }
 
         switch T.self {
@@ -250,8 +280,11 @@ extension MessagePackDecoder {
 
             do {
                 let entry = try findEntry(by: key)
-                let container = try MessagePackType.ArrayType.split(for: entry)
-                return UnkeyedContainer(referencing: decoder, container: container)
+
+                let encodedElements = try MessagePackType.ArrayType.split(for: entry)
+                let arrayStorage = ArrayStorage(encodedElements: encodedElements)
+
+                return UnkeyedContainer(referencing: decoder, arrayStorage: arrayStorage)
             } catch let error as MessagePackError {
                 throw error.asDecodingError([Any].self, codingPath: codingPath)
             } catch {
@@ -281,7 +314,7 @@ extension MessagePackDecoder {
         private let decoder: MessagePackDecoder
         private(set) var codingPath: [CodingKey]
         private(set) var count: Int?
-        private var container: [Data]
+        private var arrayStorage: ArrayStorage
 
         var isAtEnd: Bool {
             return currentIndex >= count!
@@ -292,13 +325,25 @@ extension MessagePackDecoder {
             return decoder.codingPath
         }
 
-        private(set) var currentIndex = 0
+        private var encodedElements: [Data] {
+            return arrayStorage.encodedElements
+        }
 
-        init(referencing decoder: MessagePackDecoder, container: [Data]) {
+        private(set) var currentIndex: Int {
+            get {
+                return arrayStorage.currentIndex
+            }
+
+            set {
+                arrayStorage.currentIndex = newValue
+            }
+        }
+
+        fileprivate init(referencing decoder: MessagePackDecoder, arrayStorage: ArrayStorage) {
             self.decoder = decoder
             self.codingPath = decoder.codingPath
-            self.count = container.count
-            self.container = container
+            self.count = arrayStorage.encodedElements.count
+            self.arrayStorage = arrayStorage
         }
 
         func validateIndex<T>(_ type: T.Type) throws {
@@ -314,7 +359,7 @@ extension MessagePackDecoder {
             decoder.codingPath.append(MessagePackKey(index: currentIndex))
             defer { decoder.codingPath.removeLast() }
 
-            let value = container[currentIndex]
+            let value = encodedElements[currentIndex]
             currentIndex += 1
 
             return try decoder.unboxMessagePack(value, as: type)
@@ -326,7 +371,7 @@ extension MessagePackDecoder {
             decoder.codingPath.append(MessagePackKey(index: currentIndex))
             defer { decoder.codingPath.removeLast() }
 
-            let value = container[currentIndex]
+            let value = encodedElements[currentIndex]
             currentIndex += 1
 
             return try decoder.unboxInteger(value, as: type)
@@ -334,7 +379,7 @@ extension MessagePackDecoder {
 
         mutating func decodeNil() throws -> Bool {
             try validateIndex(Data?.self)
-            return decoder.unboxNil(container[currentIndex])
+            return decoder.unboxNil(encodedElements[currentIndex])
         }
 
         mutating func decode(_ type: Bool.Type) throws -> Bool {
@@ -399,7 +444,7 @@ extension MessagePackDecoder {
             decoder.codingPath.append(MessagePackKey(index: currentIndex))
             defer { decoder.codingPath.removeLast() }
 
-            let value = container[currentIndex]
+            let value = encodedElements[currentIndex]
             currentIndex += 1
 
             return try decoder.unbox(value, as: type)
@@ -412,7 +457,7 @@ extension MessagePackDecoder {
             do {
                 try validateIndex(UnkeyedContainer.self)
 
-                let value = self.container[currentIndex]
+                let value = encodedElements[currentIndex]
                 let container = try MessagePackType.MapType.split(for: value)
 
                 currentIndex += 1
@@ -432,12 +477,12 @@ extension MessagePackDecoder {
             do {
                 try validateIndex(UnkeyedContainer.self)
 
-                let value = self.container[currentIndex]
-                let container = try MessagePackType.ArrayType.split(for: value)
+                let value = encodedElements[currentIndex]
+                let encodedElements = try MessagePackType.ArrayType.split(for: value)
 
                 currentIndex += 1
 
-                return UnkeyedContainer(referencing: decoder, container: container)
+                return UnkeyedContainer(referencing: decoder, arrayStorage: ArrayStorage(encodedElements: encodedElements))
             } catch let error as MessagePackError {
                 throw error.asDecodingError([Any].self, codingPath: codingPath)
             } catch {
@@ -451,7 +496,7 @@ extension MessagePackDecoder {
 
             try validateIndex(UnkeyedContainer.self)
 
-            let value = self.container[currentIndex]
+            let value = encodedElements[currentIndex]
             currentIndex += 1
 
             return MessagePackDecoder(referencing: value, codingPath: decoder.codingPath)
@@ -539,6 +584,56 @@ extension MessagePackDecoder {
 
         func decode<T: Decodable>(_ type: T.Type) throws -> T {
             return try decoder.unbox(container, as: type)
+        }
+    }
+}
+
+private extension MessagePackDecoder {
+    class ArrayStorage {
+        let encodedElements: [Data]
+        var currentIndex = 0
+
+        init(encodedElements: [Data]) {
+            self.encodedElements = encodedElements
+        }
+    }
+
+    enum ContainerStorage {
+        case map([String: Data])
+        case array(ArrayStorage)
+        case singleValue(Data)
+
+        init(encodedData: Data) {
+            if let map = try? MessagePackType.MapType.split(for: encodedData) {
+                self = .map(map)
+            } else if let array = try? MessagePackType.ArrayType.split(for: encodedData) {
+                self = .array(ArrayStorage(encodedElements: array))
+            } else {
+                self = .singleValue(encodedData)
+            }
+        }
+    }
+}
+
+private extension MessagePackDecoder {
+    struct Storage {
+        private var containers = [ContainerStorage]()
+
+        var count: Int {
+            return containers.count
+        }
+
+        var last: ContainerStorage? {
+            return containers.last
+        }
+
+        mutating func push(_ container: ContainerStorage) {
+            containers.append(container)
+        }
+
+        mutating func popContainer() -> ContainerStorage {
+            precondition(containers.count > 0, "Empty container stack.")
+            return containers.popLast()!
         }
     }
 }
