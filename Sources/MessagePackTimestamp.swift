@@ -67,3 +67,15 @@ extension MessagePackTimestamp: MessagePackable {
         return try MessagePackTimestamp(extension: ext)
     }
 }
+
+extension MessagePackTimestamp: Comparable {
+   public static func <(lhs: MessagePackTimestamp, rhs: MessagePackTimestamp) -> Bool {
+      if lhs.seconds < rhs.seconds {
+         return true
+      } else if lhs.seconds > rhs.seconds {
+         return false
+      } else {
+         return lhs.nanoseconds < rhs.nanoseconds
+      }
+   }
+}
