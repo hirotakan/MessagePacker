@@ -32,6 +32,9 @@ extension MessagePackType.FloatType {
     }
 
     static func unpack(for value: Data) throws -> Float {
+        guard let firstByte = value.first else { throw MessagePackError.emptyData }
+        guard firstByte == self.firstByte else { throw MessagePackError.invalidData }
+
         let unpacked: UInt32 = try unpackInteger(try value.subdata(dataRange))
         return Float(bitPattern: UInt32(bigEndian: unpacked))
     }
