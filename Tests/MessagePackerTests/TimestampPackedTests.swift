@@ -37,4 +37,19 @@ class TimestampPackedTests: XCTestCase {
         let output = Data([199, 12, 255, 25, 69, 229, 222, 0, 0, 0, 14, 211, 132, 20, 74])
         XCTAssertEqual(try encoder.encode(input), output)
     }
+
+    func testSupportsNonMessagePackEncoder() {
+        let input = MessagePackTimestamp(seconds: 1542592042, nanoseconds: 209741115)
+
+        let jsonEncoder = JSONEncoder()
+        jsonEncoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+
+        let output = """
+            {
+              "nanoseconds" : 209741115,
+              "seconds" : 1542592042
+            }
+            """.data(using: .utf8)!
+        XCTAssertEqual(try jsonEncoder.encode(input), output)
+    }
 }

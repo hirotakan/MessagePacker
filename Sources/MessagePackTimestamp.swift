@@ -47,12 +47,33 @@ extension MessagePackTimestamp {
 }
 
 extension MessagePackTimestamp: Codable {
+    enum CodingKeys: String, CodingKey {
+        case seconds
+        case nanoseconds
+    }
+
     public func encode(to encoder: Encoder) throws {
-        try encoder.singleValueContainer().encode(self)
+        do {
+            // First, try encoding as a `MessagePackable`, which requires a `MessagePackEncoder`.
+            try encoder.singleValueContainer().encode(self)
+        } catch let error as MessagePackableEncodingError where error == .notMessagePackEncoder {
+            // If the caller is not using a `MessagePackEncoder`, then fall back to standard, non-MessagePack behavior.
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(seconds, forKey: .seconds)
+            try container.encode(nanoseconds, forKey: .nanoseconds)
+        }
     }
 
     public init(from decoder: Decoder) throws {
-        self = try decoder.singleValueContainer().decode(as: MessagePackTimestamp.self)
+        do {
+            // First, try decoding as a `MessagePackable`, which requires a `MessagePackDecoder`.
+            self = try decoder.singleValueContainer().decode(as: MessagePackTimestamp.self)
+        } catch let error as MessagePackableDecodingError where error == .notMessagePackDecoder {
+            // If the caller is not using a `MessagePackDecoder`, then fall back to standard, non-MessagePack behavior.
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            self.seconds = try container.decode(Int64.self, forKey: .seconds)
+            self.nanoseconds = try container.decode(Int64.self, forKey: .nanoseconds)
+        }
     }
 }
 

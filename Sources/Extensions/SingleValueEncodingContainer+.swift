@@ -8,8 +8,15 @@
 
 import Foundation
 
+enum MessagePackableEncodingError: Error {
+    case notMessagePackEncoder
+}
+
 extension SingleValueEncodingContainer {
     func encode<T: MessagePackable>(_ value: T) throws {
-        try (self as! MessagePackEncoder.SingleValueContainer).encode(from: value)
+        guard let messagePackContainer = self as? MessagePackEncoder.SingleValueContainer else {
+            throw MessagePackableEncodingError.notMessagePackEncoder
+        }
+        try messagePackContainer.encode(from: value)
     }
 }

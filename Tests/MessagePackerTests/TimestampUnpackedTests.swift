@@ -69,4 +69,18 @@ class TimestampUnpackedTests: XCTestCase {
 
         XCTAssertEqual(try decoder.decode(Vehicle.self, from: input), output)
     }
+
+    func testSupportsNonMessagePackDecoder() {
+        let input = """
+            {
+              "nanoseconds" : 209741115,
+              "seconds" : 1542592042
+            }
+            """.data(using: .utf8)!
+
+        let jsonDecoder = JSONDecoder()
+
+        let output = MessagePackTimestamp(seconds: 1542592042, nanoseconds: 209741115)
+        XCTAssertEqual(try jsonDecoder.decode(MessagePackTimestamp.self, from: input), output)
+    }
 }
