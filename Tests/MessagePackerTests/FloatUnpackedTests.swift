@@ -25,4 +25,9 @@ class FloatUnpackedTests: XCTestCase {
         let output: Float = 3.14
         XCTAssertEqual(try decoder.decode(Float.self, from: input), output)
     }
+
+   func testMismatchedType() {
+       let input = Data([207, 255, 255, 255, 255, 255, 255, 255, 255])
+       XCTAssertThrowsError(try decoder.decode(Float.self, from: input))
+   }
 }
