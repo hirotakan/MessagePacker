@@ -9,6 +9,7 @@
 import Foundation
 
 public struct MessagePackTimestamp: Equatable {
+    internal static let NSEC_MAX: Int64 = 999999999
     public var seconds: Int64
     public var nanoseconds: Int64
     

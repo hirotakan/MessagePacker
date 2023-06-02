@@ -28,7 +28,19 @@ extension MessagePackExtension {
         case let (0, value):
             self.data = packInteger(for: value.bigEndian)
         default:
-            self.data = packInteger(for: UInt32(timestamp.nanoseconds).bigEndian) + packInteger(for: Int64(timestamp.seconds).bigEndian)
+            if timestamp.nanoseconds < 0 {
+                // Adjust these values from
+                // "negative nanosec from nearest larger negative integer"
+                // to
+                // "positive nanosec from nearest smaller nagative integer".
+                let seconds = timestamp.seconds - 1
+                let nanoSeconds = (MessagePackTimestamp.NSEC_MAX + 1) + timestamp.nanoseconds
+                self.data = packInteger(for: UInt32(nanoSeconds).bigEndian) + packInteger(for: Int64(seconds).bigEndian)
+            }
+            else {
+                self.data = packInteger(for: UInt32(timestamp.nanoseconds).bigEndian) + packInteger(for: Int64(timestamp.seconds).bigEndian)
+            }
+            
         }
     }
 }
